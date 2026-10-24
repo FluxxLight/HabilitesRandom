@@ -84,7 +84,7 @@ public final class UiLayout {
         Rect footer = new Rect(panel.x() + pad, panel.bottom() - pad - safeFooter,
                 panel.width() - 2 * pad, safeFooter);
         int contentY = header.bottom() + 4;
-        int contentHeight = Math.max(40, footer.y() - contentY - 8);
+        int contentHeight = Math.max(36, footer.y() - contentY - 18);
         Rect content = new Rect(panel.x() + pad, contentY, panel.width() - 2 * pad, contentHeight);
         return new PageLayout(panel, header, content, footer);
     }

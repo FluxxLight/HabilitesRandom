@@ -28,17 +28,18 @@ public final class RandomizerScreen extends AbstractHubScreen {
     @Override
     protected void buildContent() {
         UiLayout.Rect content = content();
-        boolean wide = content.width() >= 600 && content.height() >= 260;
+        boolean wide = content.width() >= 600 && content.height() >= 220;
         if (wide) {
             int portraitWidth = content.width() * 44 / 100;
             portrait = new UiLayout.Rect(content.x(), content.y(), portraitWidth, content.height());
             details = new UiLayout.Rect(portrait.right() + 12, content.y(),
                     content.width() - portraitWidth - 12, content.height());
         } else {
-            int portraitHeight = UiLayout.clamp(content.height() * 43 / 100, 80, 180);
+            int portraitHeight = UiLayout.clamp(content.height() * 40 / 100, 36,
+                    Math.min(170, content.height()));
             portrait = new UiLayout.Rect(content.x(), content.y(), content.width(), portraitHeight);
-            details = new UiLayout.Rect(content.x(), portrait.bottom() + 8, content.width(),
-                    Math.max(60, content.bottom() - portrait.bottom() - 8));
+            details = new UiLayout.Rect(content.x(), portrait.bottom() + 6, content.width(),
+                    Math.max(28, content.bottom() - portrait.bottom() - 6));
         }
 
         UiLayout.Rect footer = layout().footer();
@@ -67,6 +68,8 @@ public final class RandomizerScreen extends AbstractHubScreen {
     }
 
     private void drawPortrait(GuiGraphicsExtractor graphics) {
+        graphics.enableScissor(portrait.x() + 2, portrait.y() + 2,
+                portrait.right() - 2, portrait.bottom() - 2);
         long now = System.currentTimeMillis();
         int centerX = portrait.x() + portrait.width() / 2;
         int centerY = portrait.y() + portrait.height() / 2;
@@ -88,21 +91,25 @@ public final class RandomizerScreen extends AbstractHubScreen {
                 radius, UiTheme.GOLD);
         UiText.centered(graphics, font,
                 Component.translatable("habilitesrandom.randomizer.preparing").getString(),
-                centerX, portrait.bottom() - 16, portrait.width() - 12, UiTheme.TEXT_DIM);
+                centerX, portrait.bottom() - 14, portrait.width() - 12, UiTheme.TEXT_DIM);
+        graphics.disableScissor();
     }
 
     private void drawDetails(GuiGraphicsExtractor graphics) {
         int x = details.x() + 12;
         int width = details.width() - 24;
         int y = details.y() + 10;
-        UiText.label(graphics, font,
-                Component.translatable("habilitesrandom.randomizer.description").getString(),
-                x, y, width, UiTheme.TEXT_SOFT);
-        int descriptionLines = font.split(Component.translatable("habilitesrandom.randomizer.description"),
-                width).size();
-        y += Math.min(4, descriptionLines) * (font.lineHeight + 2) + 8;
-        UiTheme.divider(graphics, x, y, width, 0.8F);
-        y += 8;
+        Component description = Component.translatable("habilitesrandom.randomizer.description");
+        int descriptionLimit = Math.max(1, Math.min(4, (details.height() - 50) / (font.lineHeight + 2)));
+
+        graphics.enableScissor(details.x() + 2, details.y() + 2, details.right() - 2, details.bottom() - 2);
+        int descriptionHeight = UiText.wrapped(graphics, font, description, x, y, width,
+                UiTheme.TEXT_SOFT, descriptionLimit);
+        y += descriptionHeight + 8;
+        if (y < details.bottom() - 10) {
+            UiTheme.divider(graphics, x, y, width, 0.8F);
+            y += 8;
+        }
 
         String[] labels = {
                 "habilitesrandom.randomizer.character",
@@ -111,15 +118,16 @@ public final class RandomizerScreen extends AbstractHubScreen {
                 "habilitesrandom.randomizer.rarity",
                 "habilitesrandom.randomizer.chance"
         };
-        int available = details.bottom() - y - 8;
-        int rowHeight = available / labels.length;
-        for (int index = 0; index < labels.length; index++) {
+        int available = Math.max(0, details.bottom() - y - 8);
+        int rowHeight = Math.max(1, available / labels.length);
+        for (int index = 0; index < labels.length && y + rowHeight <= details.bottom() - 4; index++) {
             int rowY = y + index * rowHeight;
-            graphics.fill(x, rowY, x + width, rowY + Math.max(1, rowHeight - 3),
+            graphics.fill(x, rowY, x + width, rowY + Math.max(1, rowHeight - 2),
                     index % 2 == 0 ? 0x25152542 : 0x18101E32);
             UiText.keyValue(graphics, font, Component.translatable(labels[index]).getString(), "—",
-                    x + 6, rowY + Math.max(1, (rowHeight - font.lineHeight - 3) / 2), width - 12,
+                    x + 6, rowY + Math.max(0, (rowHeight - font.lineHeight - 2) / 2), width - 12,
                     UiTheme.TEXT_DIM, UiTheme.GOLD);
         }
+        graphics.disableScissor();
     }
 }

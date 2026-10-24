@@ -26,7 +26,7 @@ Minecraft 26.x is unobfuscated, so this project uses the non-remapping `net.fabr
 ./gradlew runClientGameTest
 ```
 
-The built mod is written to `build/libs/`. On a successful branch build, GitHub Actions also copies the verified remapped jar and its SHA-256 checksum into `dev-builds/`, making the development build reproducible from the repository itself.
+The built mod is written to `build/libs/`. On a successful branch build, GitHub Actions also copies the verified remapped jar and its SHA-256 checksum into `dev-builds/`, making the development build reproducible from the repository itself. The successful headless client smoke test commits real captures of every initial screen to `qa/screenshots/`.
 
 ## Architecture
 

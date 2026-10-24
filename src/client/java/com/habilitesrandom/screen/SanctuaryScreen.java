@@ -31,17 +31,18 @@ public final class SanctuaryScreen extends AbstractHubScreen {
     @Override
     protected void buildContent() {
         UiLayout.Rect content = content();
-        boolean wide = content.width() >= 600 && content.height() >= 240;
+        boolean wide = content.width() >= 600 && content.height() >= 220;
         if (wide) {
             int mapWidth = content.width() * 58 / 100;
             map = new UiLayout.Rect(content.x(), content.y(), mapWidth, content.height());
             info = new UiLayout.Rect(map.right() + 10, content.y(),
                     content.width() - mapWidth - 10, content.height());
         } else {
-            int mapHeight = UiLayout.clamp(content.height() * 55 / 100, 90, 220);
+            int mapHeight = UiLayout.clamp(content.height() * 52 / 100, 38,
+                    Math.min(220, content.height()));
             map = new UiLayout.Rect(content.x(), content.y(), content.width(), mapHeight);
-            info = new UiLayout.Rect(content.x(), map.bottom() + 8, content.width(),
-                    Math.max(48, content.bottom() - map.bottom() - 8));
+            info = new UiLayout.Rect(content.x(), map.bottom() + 6, content.width(),
+                    Math.max(28, content.bottom() - map.bottom() - 6));
         }
 
         UiLayout.Rect footer = layout().footer();
@@ -101,10 +102,17 @@ public final class SanctuaryScreen extends AbstractHubScreen {
         int x = info.x() + 10;
         int width = info.width() - 20;
         int y = info.y() + 8;
-        UiText.wrapped(graphics, font, Component.translatable("habilitesrandom.sanctuary.description"),
-                x, y, width, UiTheme.TEXT_SOFT, 3);
-        y += UiText.wrappedHeight(font, Component.translatable("habilitesrandom.sanctuary.description"),
-                width, 3) + 8;
+        Component description = Component.translatable("habilitesrandom.sanctuary.description");
+        int descriptionLines = Math.max(1, Math.min(3, (info.height() - 45) / (font.lineHeight + 2)));
+
+        graphics.enableScissor(info.x() + 2, info.y() + 2, info.right() - 2, info.bottom() - 2);
+        int descriptionHeight = UiText.wrapped(graphics, font, description, x, y, width,
+                UiTheme.TEXT_SOFT, descriptionLines);
+        y += descriptionHeight + 8;
+        if (y >= info.bottom() - 10) {
+            graphics.disableScissor();
+            return;
+        }
         UiTheme.divider(graphics, x, y, width, 0.8F);
         y += 7;
 
@@ -129,9 +137,10 @@ public final class SanctuaryScreen extends AbstractHubScreen {
                 x, y, width, UiTheme.TEXT_DIM, UiTheme.TEXT_SOFT);
 
         int progressY = Math.min(info.bottom() - 18, y + 20);
-        if (progressY > y + 16 && info.height() > 150) {
+        if (progressY > y + 16 && info.height() > 150 && progressY < info.bottom() - 8) {
             UiTheme.progress(graphics, x, progressY, width, 4,
                     ClientProfileCache.sanctuaryProgress() / 100.0F, UiTheme.GREEN, 0.9F);
         }
+        graphics.disableScissor();
     }
 }

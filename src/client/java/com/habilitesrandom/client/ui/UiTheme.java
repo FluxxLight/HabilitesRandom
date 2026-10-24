@@ -102,8 +102,9 @@ public final class UiTheme {
     }
 
     public static void icon(GuiGraphicsExtractor graphics, int x, int y, int size) {
+        // Sample the entire source image; using size as srcWidth would only show its top-left corner.
         graphics.blit(RenderPipelines.GUI_TEXTURED, ICON, x, y, 0, 0, size, size,
-                size, size, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE, -1);
+                ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE, -1);
     }
 
     public static void diamond(GuiGraphicsExtractor graphics, int centerX, int centerY, int radius, int color) {

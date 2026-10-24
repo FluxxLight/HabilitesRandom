@@ -180,8 +180,13 @@ public final class SettingsScreen extends AbstractHubScreen {
         Component value = listeningSlot == slot
                 ? Component.translatable("habilitesrandom.settings.controls.listening")
                 : mapping.getTranslatedKeyMessage();
+        boolean compact = rect.height() < 34;
+        Component title = compact
+                ? Component.translatable(mapping.getName()).copy().append(Component.literal("   ")).append(value)
+                : Component.translatable(mapping.getName());
+        Component subtitle = compact ? Component.empty() : value;
         HubButton button = new HubButton(rect.x(), rect.y(), rect.width(), rect.height(),
-                Component.translatable(mapping.getName()), value, UiTheme.CYAN, true,
+                title, subtitle, UiTheme.CYAN, true,
                 trigger -> {
                     listeningSlot = slot;
                     rebuildWidgets();
@@ -193,8 +198,14 @@ public final class SettingsScreen extends AbstractHubScreen {
     private void addToggleRow(UiLayout.Rect rect, String labelKey, Supplier<Boolean> getter,
                               Consumer<Boolean> setter) {
         boolean value = Boolean.TRUE.equals(getter.get());
+        Component state = Component.literal(value ? "ON" : "OFF");
+        boolean compact = rect.height() < 34;
+        Component title = compact
+                ? Component.translatable(labelKey).copy().append(Component.literal("   ")).append(state)
+                : Component.translatable(labelKey);
+        Component subtitle = compact ? Component.empty() : state;
         HubButton button = new HubButton(rect.x(), rect.y(), rect.width(), rect.height(),
-                Component.translatable(labelKey), Component.literal(value ? "ON" : "OFF"),
+                title, subtitle,
                 value ? UiTheme.GREEN : UiTheme.RED, true, trigger -> {
                     setter.accept(!Boolean.TRUE.equals(getter.get()));
                     HabilitesRandomClient.saveConfig();
@@ -217,9 +228,13 @@ public final class SettingsScreen extends AbstractHubScreen {
                 : category == Category.GENERAL
                 ? Component.translatable("habilitesrandom.settings.general.tooltips.body")
                 : Component.translatable(category.titleKey);
+        int descriptionHeight = UiLayout.clamp(body.height() * 16 / 100, 26, 44);
+        graphics.enableScissor(body.x() + pad, body.y() + 4, body.right() - pad,
+                Math.min(body.bottom(), body.y() + descriptionHeight - 6));
         UiText.wrapped(graphics, font, description, body.x() + pad, body.y() + 7,
                 body.width() - 2 * pad, UiTheme.TEXT_SOFT, 2);
-        UiTheme.divider(graphics, body.x() + pad, body.y() + UiLayout.clamp(body.height() * 16 / 100, 26, 44) - 5,
+        graphics.disableScissor();
+        UiTheme.divider(graphics, body.x() + pad, body.y() + descriptionHeight - 5,
                 body.width() - 2 * pad, 0.7F);
     }
 
