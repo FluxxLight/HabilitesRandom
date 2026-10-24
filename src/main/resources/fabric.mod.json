@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "habilitesrandom",
+  "version": "${version}",
+  "name": "HabilitesRandom",
+  "description": "Foundation, server-authoritative player data and the premium HUB interface for HabilitesRandom.",
+  "authors": [
+    "FluxxLight"
+  ],
+  "contact": {
+    "homepage": "https://github.com/FluxxLight/HabilitesRandom",
+    "sources": "https://github.com/FluxxLight/HabilitesRandom",
+    "issues": "https://github.com/FluxxLight/HabilitesRandom/issues"
+  },
+  "license": "All Rights Reserved",
+  "icon": "assets/habilitesrandom/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.habilitesrandom.HabilitesRandom"
+    ],
+    "client": [
+      "com.habilitesrandom.client.HabilitesRandomClient"
+    ],
+    "habilitesrandom:addon": []
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "custom": {
+    "habilitesrandom": {
+      "core_api": 1,
+      "stage": "prompt-1",
+      "authority": "server"
+    }
+  }
+}
