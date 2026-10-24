@@ -72,6 +72,9 @@ public final class ClientProfileCache {
         return snapshot.progress().transformationUses();
     }
 
+    public static int transformationDailyLimit() { return snapshot.progress().transformationDailyLimit(); }
+    public static int transformationActiveSeconds() { int elapsed=receivedAt==0?0:(int)((System.currentTimeMillis()-receivedAt)/1000L); return Math.max(0,snapshot.progress().transformationActiveSeconds()-elapsed); }
+
     public static String transformationName() {
         return snapshot.progress().transformationName();
     }

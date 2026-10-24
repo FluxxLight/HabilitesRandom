@@ -56,7 +56,7 @@
   "habilitesrandom.ability.form": "FORMA PODEROSA",
   "habilitesrandom.ability.cooldowns": "COOLDOWNS",
   "habilitesrandom.ability.keys": "TECLAS",
-  "habilitesrandom.ability.uses": "%d usos",
+  "habilitesrandom.ability.uses": "%s usos",
   "habilitesrandom.reroll.available": "Reroll disponível",
   "habilitesrandom.reroll.used": "Reroll utilizado",
   "habilitesrandom.reroll.sanctuary": "Encontre um Santuário para conseguir sua última chance.",
@@ -128,5 +128,8 @@
   "habilitesrandom.reroll.exhausted": "Você já utilizou todos os seus Rerolls.",
   "habilitesrandom.sanctuary.buy_map": "OBTER MAPA — 15 ESMERALDAS + 50% VIDA",
   "habilitesrandom.sanctuary.claim": "RECEBER ÚLTIMO REROLL",
-  "habilitesrandom.sanctuary.explorer": "EXPLORADOR VAMPIRO"
+  "habilitesrandom.sanctuary.explorer": "EXPLORADOR VAMPIRO",
+  "item.habilitesrandom.powerful_fruit": "Fruto Poderoso",
+  "item.habilitesrandom.powerful_fruit.active": "O benefício do Fruto Poderoso já está ativo.",
+  "item.habilitesrandom.powerful_fruit.applied": "Agora você possui 2 usos de Forma Poderosa por dia."
 }

@@ -36,7 +36,9 @@ public final class PlayerProfileCodecs {
             Codec.INT.optionalFieldOf("transformation_uses", 0).forGetter(PlayerProfile.Loadout::transformationUses),
             Codec.BOOL.optionalFieldOf("powerful_fruit_active", false).forGetter(PlayerProfile.Loadout::powerfulFruitActive),
             Codec.INT.optionalFieldOf("powerful_fruit_uses", 0).forGetter(PlayerProfile.Loadout::powerfulFruitUses),
-            Codec.INT.optionalFieldOf("bad_luck_counter", 0).forGetter(PlayerProfile.Loadout::badLuckCounter)
+            Codec.INT.optionalFieldOf("bad_luck_counter", 0).forGetter(PlayerProfile.Loadout::badLuckCounter),
+            Codec.LONG.optionalFieldOf("last_powerful_form_day", -1L).forGetter(PlayerProfile.Loadout::lastPowerfulFormDay),
+            Codec.LONG.optionalFieldOf("powerful_form_active_until", 0L).forGetter(PlayerProfile.Loadout::powerfulFormActiveUntilMillis)
     ).apply(instance, PlayerProfile.Loadout::new));
 
     private static final Codec<PlayerProfile.Cooldowns> COOLDOWNS = RecordCodecBuilder.create(instance -> instance.group(

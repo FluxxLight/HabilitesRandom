@@ -33,7 +33,7 @@
   "custom": {
     "habilitesrandom": {
       "core_api": 1,
-      "stage": "prompt-4",
+      "stage": "prompt-5",
       "authority": "server"
     }
   }

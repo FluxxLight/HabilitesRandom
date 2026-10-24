@@ -38,7 +38,7 @@ public record ProfileSyncPayload(Core core, Progress progress) implements Custom
     public static ProfileSyncPayload empty() {
         return new ProfileSyncPayload(
                 new Core(false, false, "", "", "", "", "", "unknown"),
-                new Progress("UNINITIALIZED", "", 0, "0,0,0,0", 0, false, 0, "UNDISCOVERED"));
+                new Progress("INITIAL_RANDOM", "", 0, 1, 0, "0,0,0,0", 0, false, 0, "UNDISCOVERED"));
     }
 
     public static ProfileSyncPayload from(PlayerProfile profile, boolean present) {
@@ -62,10 +62,14 @@ public record ProfileSyncPayload(Core core, Progress progress) implements Custom
                 rarityName(rarityId),
                 identity.strengthCategory().serializedName());
 
+        long day = com.habilitesrandom.data.ServerRuntime.server() == null ? 0 : com.habilitesrandom.transformation.PowerfulFormRuntime.currentDay(com.habilitesrandom.data.ServerRuntime.server());
+        var formAvailability = com.habilitesrandom.transformation.PowerfulFormService.availability(safe, day, now);
         Progress progress = new Progress(
                 safe.progress().rerollState().name(),
                 transformationName(safe.loadout().transformationId()),
-                safe.loadout().transformationUses(),
+                formAvailability.used(),
+                formAvailability.limit(),
+                (int)Math.ceil(formAvailability.activeMillis()/1000.0),
                 ProfileValues.joinCooldowns(safe.cooldowns().remainingSeconds(now)),
                 safe.loadout().badLuckCounter(),
                 safe.loadout().powerfulFruitActive(),
@@ -124,6 +128,8 @@ public record ProfileSyncPayload(Core core, Progress progress) implements Custom
             String rerollState,
             String transformationName,
             int transformationUses,
+            int transformationDailyLimit,
+            int transformationActiveSeconds,
             String cooldownSeconds,
             int badLuckCounter,
             boolean powerfulFruitActive,
@@ -134,6 +140,8 @@ public record ProfileSyncPayload(Core core, Progress progress) implements Custom
                 ByteBufCodecs.stringUtf8(TEXT_LIMIT), Progress::rerollState,
                 ByteBufCodecs.stringUtf8(TEXT_LIMIT), Progress::transformationName,
                 ByteBufCodecs.VAR_INT, Progress::transformationUses,
+                ByteBufCodecs.VAR_INT, Progress::transformationDailyLimit,
+                ByteBufCodecs.VAR_INT, Progress::transformationActiveSeconds,
                 ByteBufCodecs.stringUtf8(TEXT_LIMIT), Progress::cooldownSeconds,
                 ByteBufCodecs.VAR_INT, Progress::badLuckCounter,
                 ByteBufCodecs.BOOL, Progress::powerfulFruitActive,

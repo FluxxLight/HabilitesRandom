@@ -2,7 +2,7 @@ package com.habilitesrandom.config.server;
 import java.util.*;
 /** Server-owned gameplay policy. Empty allow lists mean all registered values are allowed. */
 public final class ServerConfig {
- public boolean randomizerEnabled=true, antiLuckEnabled=true, announceResults=true, abilityExecutionEnabled=true, blockDestruction=false, sanctuaryEnabled=true, sanctuaryVillageGeneration=true, sanctuaryEffects=true, sanctuaryDeathProtection=true;
+ public boolean randomizerEnabled=true, antiLuckEnabled=true, announceResults=true, abilityExecutionEnabled=true, blockDestruction=false, allowPowerfulFormTerrainDamage=false, sanctuaryEnabled=true, sanctuaryVillageGeneration=true, sanctuaryEffects=true, sanctuaryDeathProtection=true;
  public String announcementMode="GLOBAL";
  public Set<String> blockedCharacters=new HashSet<>(), enabledRarities=new HashSet<>(), enabledCategories=new HashSet<>(), allowedDimensions=new HashSet<>();
  public Map<String,Double> characterWeightOverrides=new HashMap<>();

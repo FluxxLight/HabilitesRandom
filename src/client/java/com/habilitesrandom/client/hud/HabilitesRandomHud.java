@@ -100,10 +100,10 @@ public final class HabilitesRandomHud {
         }
 
         String form = ClientProfileCache.transformationName();
-        String uses = Integer.toString(ClientProfileCache.transformationUses());
-        UiText.label(graphics, font,
-                form.isBlank() ? Component.translatable("habilitesrandom.hud.form_empty").getString() : form,
-                cx, cy, width - 30, UiTheme.PURPLE);
+        int activeSeconds=ClientProfileCache.transformationActiveSeconds();
+        String uses = ClientProfileCache.transformationUses()+"/"+ClientProfileCache.transformationDailyLimit();
+        String formText=form.isBlank()?Component.translatable("habilitesrandom.hud.form_empty").getString():form+(activeSeconds>0?" · "+activeSeconds+"s":"");
+        UiText.label(graphics, font, formText, cx, cy, width - 38, activeSeconds>0?UiTheme.GOLD:UiTheme.PURPLE);
         graphics.text(font, uses, x + width - 8 - font.width(uses), cy, UiTheme.TEXT_SOFT, false);
     }
     private static AbilityDefinition ability(int slot) {

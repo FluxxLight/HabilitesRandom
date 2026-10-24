@@ -56,7 +56,7 @@
   "habilitesrandom.ability.form": "POWERFUL FORM",
   "habilitesrandom.ability.cooldowns": "COOLDOWNS",
   "habilitesrandom.ability.keys": "KEYS",
-  "habilitesrandom.ability.uses": "%d uses",
+  "habilitesrandom.ability.uses": "%s uses",
   "habilitesrandom.reroll.available": "Reroll available",
   "habilitesrandom.reroll.used": "Reroll used",
   "habilitesrandom.reroll.sanctuary": "Find a Sanctuary to earn your last chance.",
@@ -128,5 +128,8 @@
   "habilitesrandom.reroll.exhausted": "You have used all your Rerolls.",
   "habilitesrandom.sanctuary.buy_map": "GET MAP — 15 EMERALDS + 50% HEALTH",
   "habilitesrandom.sanctuary.claim": "CLAIM FINAL REROLL",
-  "habilitesrandom.sanctuary.explorer": "VAMPIRE EXPLORER"
+  "habilitesrandom.sanctuary.explorer": "VAMPIRE EXPLORER",
+  "item.habilitesrandom.powerful_fruit": "Powerful Fruit",
+  "item.habilitesrandom.powerful_fruit.active": "The Powerful Fruit benefit is already active.",
+  "item.habilitesrandom.powerful_fruit.applied": "You now have 2 Powerful Form uses per day."
 }

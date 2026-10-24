@@ -145,7 +145,9 @@ public record PlayerProfile(
             int transformationUses,
             boolean powerfulFruitActive,
             int powerfulFruitUses,
-            int badLuckCounter
+            int badLuckCounter,
+            long lastPowerfulFormDay,
+            long powerfulFormActiveUntilMillis
     ) {
         public Loadout {
             abilityIds = abilityIds == null ? List.of() : List.copyOf(abilityIds.stream()
@@ -157,10 +159,12 @@ public record PlayerProfile(
             transformationUses = ProfileValues.nonNegative(transformationUses);
             powerfulFruitUses = ProfileValues.nonNegative(powerfulFruitUses);
             badLuckCounter = ProfileValues.nonNegative(badLuckCounter);
+            lastPowerfulFormDay = Math.max(-1, lastPowerfulFormDay);
+            powerfulFormActiveUntilMillis = Math.max(0, powerfulFormActiveUntilMillis);
         }
 
         public static Loadout empty() {
-            return new Loadout(List.of(), "", 0, false, 0, 0);
+            return new Loadout(List.of(), "", 0, false, 0, 0, -1, 0);
         }
     }
 

@@ -8,7 +8,7 @@ public final class CharacterAssignmentService {
   for(Identifier a:c.abilityIds()) if(!CoreServices.abilities().contains(a)) throw new IllegalStateException("Missing ability "+a);
   if(!CoreServices.transformations().contains(c.transformationId())) throw new IllegalStateException("Missing form "+c.transformationId());
   var identity=new PlayerProfile.Identity(c.id().toString(),c.animeId().toString(),c.rarityId().toString(),c.category().serializedName(),c.category().name());
-  var loadout=new PlayerProfile.Loadout(c.abilityIds().stream().map(Identifier::toString).toList(),c.transformationId().toString(),0,false,0,profile.loadout().badLuckCounter());
+  var loadout=new PlayerProfile.Loadout(c.abilityIds().stream().map(Identifier::toString).toList(),c.transformationId().toString(),profile.loadout().transformationUses(),profile.loadout().powerfulFruitActive(),profile.loadout().powerfulFruitUses(),profile.loadout().badLuckCounter(),profile.loadout().lastPowerfulFormDay(),0);
   return profile.withIdentity(identity).withLoadout(loadout).withCooldowns(PlayerProfile.Cooldowns.empty());
  }
 }

@@ -103,7 +103,7 @@ public final class AbilityScreen extends AbstractHubScreen {
                 content.x() + pad + 8, formY + 6, 55 * (content.width() - 2 * pad) / 100,
                 UiTheme.TEXT_DIM, UiTheme.TEXT);
         String uses = Component.translatable("habilitesrandom.ability.uses",
-                ClientProfileCache.transformationUses()).getString();
+                ClientProfileCache.transformationUses() + "/" + ClientProfileCache.transformationDailyLimit()).getString();
         graphics.text(font, uses, content.right() - pad - 8 - font.width(uses), formY + 6,
                 UiTheme.GOLD, false);
     }

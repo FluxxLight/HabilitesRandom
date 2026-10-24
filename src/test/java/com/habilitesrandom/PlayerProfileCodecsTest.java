@@ -27,7 +27,7 @@ class PlayerProfileCodecsTest {
         PlayerProfile.Identity identity = new PlayerProfile.Identity(
                 "plus:hero", "plus:series", "plus:mythic", "strong", "FORTE");
         PlayerProfile.Loadout loadout = new PlayerProfile.Loadout(
-                java.util.List.of("plus:one", "plus:two"), "plus:form", 3, true, 2, 7);
+                java.util.List.of("plus:one", "plus:two"), "plus:form", 3, true, 2, 7, 42, 0);
         PlayerProfile.Cooldowns cooldowns = new PlayerProfile.Cooldowns(1000, 2000, 3000, 4000, 5000);
         PlayerProfile.Progress progress = new PlayerProfile.Progress(1, false, 55, true,
                 "minecraft:overworld", 10, 64, -20, false, false, false, false);
