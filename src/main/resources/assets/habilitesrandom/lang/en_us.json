@@ -114,5 +114,12 @@
   "habilitesrandom.sanctuary.description.short": "Sanctuary tracking arrives in Prompt 4.",
   "habilitesrandom.settings.controls.description.short": "Click a key and press a new input.",
   "habilitesrandom.settings.general.tooltips.body.short": "Extra help is prepared for future screens.",
-  "habilitesrandom.reroll.sanctuary.short": "Find a Sanctuary."
+  "habilitesrandom.reroll.sanctuary.short": "Find a Sanctuary.",
+  "habilitesrandom.randomizer.roll": "ROLL CHARACTER",
+  "habilitesrandom.randomizer.owned": "CHARACTER ALREADY OWNED",
+  "habilitesrandom.randomizer.rolling": "SELECTING DESTINY…",
+  "habilitesrandom.randomizer.received": "CHARACTER RECEIVED",
+  "habilitesrandom.randomizer.server_decided": "Server decided",
+  "habilitesrandom.randomizer.denied.already_has_character": "You already have an ability. Use Reroll.",
+  "habilitesrandom.randomizer.denied.randomizer_disabled": "Randomizer disabled by server."
 }

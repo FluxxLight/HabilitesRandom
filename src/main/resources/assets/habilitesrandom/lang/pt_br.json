@@ -114,5 +114,12 @@
   "habilitesrandom.sanctuary.description.short": "Rastreamento do Santuário chega no Prompt 4.",
   "habilitesrandom.settings.controls.description.short": "Clique em uma tecla e pressione o novo comando.",
   "habilitesrandom.settings.general.tooltips.body.short": "Ajuda extra preparada para telas futuras.",
-  "habilitesrandom.reroll.sanctuary.short": "Encontre um Santuário."
+  "habilitesrandom.reroll.sanctuary.short": "Encontre um Santuário.",
+  "habilitesrandom.randomizer.roll": "REALIZAR SORTEIO",
+  "habilitesrandom.randomizer.owned": "PERSONAGEM JÁ RECEBIDO",
+  "habilitesrandom.randomizer.rolling": "SELECIONANDO DESTINO…",
+  "habilitesrandom.randomizer.received": "PERSONAGEM RECEBIDO",
+  "habilitesrandom.randomizer.server_decided": "Decidido pelo servidor",
+  "habilitesrandom.randomizer.denied.already_has_character": "Você já possui uma habilidade. Use o Reroll.",
+  "habilitesrandom.randomizer.denied.randomizer_disabled": "Randomizer desativado pelo servidor."
 }

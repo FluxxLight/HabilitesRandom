@@ -1,59 +1,12 @@
 package com.habilitesrandom.player;
-
-import com.habilitesrandom.HabilitesRandom;
-import com.habilitesrandom.data.PlayerDataManager;
-import com.habilitesrandom.data.ServerRuntime;
-import com.habilitesrandom.network.ActionRequestPayload;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-/** Rate-limits and validates untrusted action packets. No gameplay side effects yet. */
-public final class ServerActionGateway {
-    private static final long MIN_INTERVAL_MILLIS = 250L;
-    private static final Map<UUID, Long> LAST_REQUEST = new ConcurrentHashMap<>();
-
-    private ServerActionGateway() {
-    }
-
-    public static void handle(ActionRequestPayload payload, ServerPlayer player) {
-        if (payload == null || player == null) {
-            return;
-        }
-
-        PlayerAuthorityGate.Action action;
-        try {
-            action = PlayerAuthorityGate.Action.valueOf(payload.action());
-        } catch (IllegalArgumentException invalid) {
-            HabilitesRandom.LOGGER.debug("Rejected unknown HabilitesRandom action '{}'", payload.action());
-            return;
-        }
-
-        long now = System.currentTimeMillis();
-        Long previous = LAST_REQUEST.putIfAbsent(player.getUUID(), now);
-        if (previous != null) {
-            if (now - previous < MIN_INTERVAL_MILLIS) {
-                return;
-            }
-            LAST_REQUEST.put(player.getUUID(), now);
-        }
-
-        MinecraftServer server = ServerRuntime.server();
-        if (server == null) {
-            return;
-        }
-        PlayerAuthorityGate.Decision decision = PlayerAuthorityGate.validate(player,
-                PlayerDataManager.get(server, player.getUUID()), action, payload.slot());
-        if (!decision.allowed()) {
-            HabilitesRandom.LOGGER.debug("Rejected {} from {}: {}", action, player.getGameProfile().name(),
-                    decision.reason());
-        }
-    }
-
-    public static void forget(UUID playerId) {
-        LAST_REQUEST.remove(playerId);
-    }
+import com.habilitesrandom.*;import com.habilitesrandom.ability.*;import com.habilitesrandom.api.*;import com.habilitesrandom.config.server.*;import com.habilitesrandom.core.CoreServices;import com.habilitesrandom.data.*;import com.habilitesrandom.network.*;import com.habilitesrandom.randomizer.*;import com.habilitesrandom.util.ProfileValues;import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;import net.minecraft.network.chat.Component;import net.minecraft.server.*;import net.minecraft.server.level.ServerPlayer;import net.minecraft.resources.Identifier;import java.security.SecureRandom;import java.util.*;import java.util.concurrent.ConcurrentHashMap;
+/** Rate-limits, validates and executes untrusted action packets exclusively on the logical server. */
+public final class ServerActionGateway {private static final Map<UUID,Long> LAST_REQUEST=new ConcurrentHashMap<>();private static final Set<UUID> ROLLING=ConcurrentHashMap.newKeySet();private static final SecureRandom RANDOM=new SecureRandom();private ServerActionGateway(){}
+ public static void handle(ActionRequestPayload payload,ServerPlayer player){if(payload==null||player==null||payload.action()==null)return;PlayerAuthorityGate.Action action;try{action=PlayerAuthorityGate.Action.valueOf(payload.action());}catch(IllegalArgumentException e){return;}long now=System.currentTimeMillis();long minimum=ServerConfigStore.get().packetIntervalMillis;Long prior=LAST_REQUEST.put(player.getUUID(),now);if(prior!=null&&now-prior<minimum)return;MinecraftServer server=ServerRuntime.server();if(server==null)return;PlayerProfile profile=PlayerDataManager.get(server,player.getUUID());var decision=PlayerAuthorityGate.validate(player,profile,action,payload.slot());if(!decision.allowed()){if(action==PlayerAuthorityGate.Action.RANDOMIZE)sendResult(player,RandomizerResultPayload.denied(decision.reason()));return;}switch(action){case RANDOMIZE->randomize(server,player,profile);case ABILITY->ability(server,player,profile,payload.slot());case POWERFUL_FORM->form(server,player,profile);default->{}}}
+ private static void randomize(MinecraftServer server,ServerPlayer player,PlayerProfile profile){if(!ROLLING.add(player.getUUID()))return;try{var result=RandomizerService.draw(profile,RANDOM);PlayerDataManager.update(server,player.getUUID(),result.profile());PlayerDataManager.flush(server);CharacterDefinition c=result.character();String anime=CoreServices.catalog().find(ContentTypes.ANIME,c.animeId()).map(AnimeDefinition::displayName).orElse("");RarityDefinition rarity=CoreServices.catalog().find(ContentTypes.RARITY,c.rarityId()).orElse(null);String rarityName=rarity==null?"":rarity.displayName();int color=rarity==null?0xFFFFFFFF:rarity.color();sendResult(player,new RandomizerResultPayload(true,"ok",c.id().toString(),c.displayName(),anime,c.category().serializedName(),c.rarityId().toString(),rarityName,color));NetworkSync.sendProfile(player);announce(server,player,c,rarityName,color);}catch(RuntimeException e){HabilitesRandom.LOGGER.warn("Randomizer rejected for {}: {}",player.getGameProfile().name(),e.getMessage());sendResult(player,RandomizerResultPayload.denied(e.getMessage()==null?"randomizer_failed":e.getMessage()));}finally{ROLLING.remove(player.getUUID());}}
+ private static void ability(MinecraftServer server,ServerPlayer player,PlayerProfile profile,int slot){Identifier id=ProfileValues.parseId(profile.loadout().abilityIds().get(slot));AbilityDefinition ability=id==null?null:CoreServices.abilities().get(id).orElse(null);if(ability==null)return;ServerAbilityExecutor.execute(player,ability);PlayerProfile updated=CooldownManager.start(profile,slot,ability.cooldownTicks(),System.currentTimeMillis());PlayerDataManager.update(server,player.getUUID(),updated);NetworkSync.sendProfile(player);}
+ private static void form(MinecraftServer server,ServerPlayer player,PlayerProfile profile){Identifier id=ProfileValues.parseId(profile.loadout().transformationId());TransformationDefinition form=id==null?null:CoreServices.transformations().get(id).orElse(null);if(form==null)return;PlayerDataManager.update(server,player.getUUID(),CooldownManager.start(profile,4,form.cooldownTicks(),System.currentTimeMillis()));NetworkSync.sendProfile(player);}
+ private static void announce(MinecraftServer server,ServerPlayer winner,CharacterDefinition c,String rarity,int color){ServerConfig cfg=ServerConfigStore.get();Component message=Component.literal("[HabilitesRandom] ").withColor(0x41D9FF).append(Component.literal(winner.getGameProfile().name()+" recebeu "+c.displayName()+" — "+rarity+"!").withColor(color&0xFFFFFF));if(!cfg.announceResults||"PRIVATE".equalsIgnoreCase(cfg.announcementMode)){winner.sendSystemMessage(message);return;}for(ServerPlayer p:server.getPlayerList().getPlayers())p.sendSystemMessage(message);}
+ private static void sendResult(ServerPlayer p,RandomizerResultPayload result){if(ServerPlayNetworking.canSend(p,RandomizerResultPayload.TYPE))ServerPlayNetworking.send(p,result);}
+ public static void forget(UUID id){LAST_REQUEST.remove(id);ROLLING.remove(id);}
 }

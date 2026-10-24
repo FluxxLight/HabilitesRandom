@@ -35,6 +35,11 @@ public final class ClientConfig {
     public boolean hudVisible = true;
     public boolean compactHud = false;
     public boolean hudGlow = true;
+    public String hudPosition = "BOTTOM_RIGHT";
+    public float hudScale = 1.0F;
+    public float hudOpacity = 0.9F;
+    public boolean hudShowNames = true;
+    public boolean hudShowKeys = true;
 
     // Effects
     public boolean visualEffects = true;
@@ -52,6 +57,9 @@ public final class ClientConfig {
     public void sanitize() {
         version = CURRENT_VERSION;
         effectIntensity = EffectIntensity.from(effectIntensity).name();
+        if (!java.util.Set.of("BOTTOM_LEFT", "BOTTOM_RIGHT", "BOTTOM_CENTER").contains(hudPosition)) hudPosition = "BOTTOM_RIGHT";
+        hudScale = Math.max(0.65F, Math.min(1.5F, hudScale));
+        hudOpacity = Math.max(0.25F, Math.min(1.0F, hudOpacity));
     }
 
     public EffectIntensity intensity() {

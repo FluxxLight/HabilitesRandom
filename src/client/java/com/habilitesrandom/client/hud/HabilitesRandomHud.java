@@ -5,6 +5,9 @@ import com.habilitesrandom.client.HabilitesRandomClient;
 import com.habilitesrandom.client.input.ModKeyBindings;
 import com.habilitesrandom.client.net.ClientProfileCache;
 import com.habilitesrandom.client.ui.UiText;
+import com.habilitesrandom.api.*;
+import com.habilitesrandom.core.CoreServices;
+import com.habilitesrandom.util.ProfileValues;
 import com.habilitesrandom.client.ui.UiTheme;
 import com.habilitesrandom.config.ClientConfig;
 import com.habilitesrandom.screen.AbstractHubScreen;
@@ -36,11 +39,11 @@ public final class HabilitesRandomHud {
         }
 
         boolean compact = config.compactHud;
-        int width = compact ? 142 : 186;
-        int height = compact ? 30 : 104;
-        int x = graphics.guiWidth() - width - 8;
+        int width = Math.round((compact ? 142 : 210) * config.hudScale);
+        int height = Math.round((compact ? 30 : 122) * config.hudScale);
+        int x = switch (config.hudPosition) { case "BOTTOM_LEFT" -> 8; case "BOTTOM_CENTER" -> (graphics.guiWidth() - width) / 2; default -> graphics.guiWidth() - width - 8; };
         int y = graphics.guiHeight() - height - 46;
-        float opacity = config.hudGlow ? 0.92F : 0.78F;
+        float opacity = config.hudOpacity;
 
         graphics.fillGradient(x, y, x + width, y + height,
                 UiTheme.alpha(UiTheme.PANEL_TOP, opacity), UiTheme.alpha(UiTheme.PANEL_BOTTOM, opacity));
@@ -77,11 +80,15 @@ public final class HabilitesRandomHud {
 
         for (int slot = 0; slot < 4; slot++) {
             int remaining = ClientProfileCache.cooldownRemaining(slot);
-            String key = ModKeyBindings.actionLabel(slot).getString();
+            String key = config.hudShowKeys ? ModKeyBindings.actionLabel(slot).getString() : "";
+            AbilityDefinition ability = ability(slot);
+            String name = config.hudShowNames && ability != null ? ability.displayName() : "";
             UiText.label(graphics, font, key, cx, cy + 1, 24, UiTheme.TEXT_SOFT);
-            int barX = cx + 28;
-            int barWidth = width - 44;
-            float value = remaining <= 0 ? 1.0F : Math.max(0.08F, Math.min(1.0F, remaining / 30.0F));
+            int barX = cx + (config.hudShowKeys ? 28 : 0);
+            int barWidth = width - (config.hudShowKeys ? 44 : 16);
+            if (!name.isBlank()) UiText.label(graphics, font, name, barX, cy - 1, barWidth - 24, UiTheme.TEXT_SOFT);
+            int total = ability == null ? 30 : Math.max(1, ability.cooldownTicks() / 20);
+            float value = remaining <= 0 ? 1.0F : Math.max(0.02F, Math.min(1.0F, 1.0F - remaining / (float) total));
             int color = remaining <= 0 ? UiTheme.GREEN : UiTheme.CYAN;
             UiTheme.progress(graphics, barX, cy + 2, barWidth, 4, value, color, opacity);
             if (remaining > 0) {
@@ -99,4 +106,12 @@ public final class HabilitesRandomHud {
                 cx, cy, width - 30, UiTheme.PURPLE);
         graphics.text(font, uses, x + width - 8 - font.width(uses), cy, UiTheme.TEXT_SOFT, false);
     }
+    private static AbilityDefinition ability(int slot) {
+        var id = ProfileValues.parseId(ClientProfileCache.characterId());
+        if (id == null) return null;
+        CharacterDefinition character = CoreServices.characters().get(id).orElse(null);
+        if (character == null || slot < 0 || slot >= 4) return null;
+        return CoreServices.abilities().get(character.abilityIds().get(slot)).orElse(null);
+    }
+
 }

@@ -1,45 +1,8 @@
 package com.habilitesrandom.player;
-
-import com.habilitesrandom.data.PlayerProfile;
-import net.minecraft.server.level.ServerPlayer;
-
-/**
- * The boundary every future gameplay action must cross. It intentionally denies actions in Prompt 1
- * rather than accepting a client claim about characters, cooldowns, rerolls or transformations.
- */
-public final class PlayerAuthorityGate {
-    private PlayerAuthorityGate() {
-    }
-
-    public enum Action {
-        RANDOMIZE,
-        REROLL,
-        ABILITY,
-        POWERFUL_FORM
-    }
-
-    public record Decision(boolean allowed, String reason) {
-        public static Decision allow() {
-            return new Decision(true, "ok");
-        }
-
-        public static Decision deny(String reason) {
-            return new Decision(false, reason);
-        }
-    }
-
-    public static Decision validate(ServerPlayer player, PlayerProfile profile, Action action, int slot) {
-        if (player == null || profile == null) {
-            return Decision.deny("missing_server_context");
-        }
-        if (player.isRemoved()) {
-            return Decision.deny("removed_player");
-        }
-        if (action == Action.ABILITY && (slot < 0 || slot > 3)) {
-            return Decision.deny("invalid_ability_slot");
-        }
-
-        // Prompt 2-5 replace these explicit denials with catalog, cooldown, reroll and form checks.
-        return Decision.deny("not_implemented_server_side");
-    }
+import com.habilitesrandom.ability.CooldownManager;import com.habilitesrandom.api.*;import com.habilitesrandom.config.server.ServerConfigStore;import com.habilitesrandom.core.CoreServices;import com.habilitesrandom.data.PlayerProfile;import com.habilitesrandom.util.ProfileValues;import net.minecraft.server.level.ServerPlayer;
+/** Central validation boundary for every untrusted client gameplay request. */
+public final class PlayerAuthorityGate {private PlayerAuthorityGate(){}
+ public enum Action {RANDOMIZE,REROLL,ABILITY,POWERFUL_FORM}
+ public record Decision(boolean allowed,String reason){public static Decision allow(){return new Decision(true,"ok");}public static Decision deny(String r){return new Decision(false,r);}}
+ public static Decision validate(ServerPlayer player,PlayerProfile profile,Action action,int slot){if(player==null||profile==null)return Decision.deny("missing_server_context");if(player.isRemoved()||!player.isAlive())return Decision.deny("player_not_alive");if(action==Action.RANDOMIZE)return profile.hasCharacter()?Decision.deny("already_has_character"):ServerConfigStore.get().randomizerEnabled?Decision.allow():Decision.deny("randomizer_disabled");if(action==Action.REROLL)return Decision.deny("reroll_not_available");if(!profile.hasCharacter())return Decision.deny("no_character");var cid=ProfileValues.parseId(profile.identity().characterId());CharacterDefinition character=cid==null?null:CoreServices.characters().get(cid).orElse(null);if(character==null)return Decision.deny("unknown_character");if(action==Action.ABILITY){if(slot<0||slot>3)return Decision.deny("invalid_ability_slot");if(profile.loadout().abilityIds().size()!=4||!profile.loadout().abilityIds().get(slot).equals(character.abilityIds().get(slot).toString()))return Decision.deny("invalid_loadout");if(!CooldownManager.ready(profile,slot,System.currentTimeMillis()))return Decision.deny("cooldown");return ServerConfigStore.get().abilityExecutionEnabled?Decision.allow():Decision.deny("abilities_disabled");}if(action==Action.POWERFUL_FORM){if(!profile.loadout().transformationId().equals(character.transformationId().toString()))return Decision.deny("invalid_form");if(!CooldownManager.ready(profile,4,System.currentTimeMillis()))return Decision.deny("cooldown");return Decision.allow();}return Decision.deny("unsupported_action");}
 }

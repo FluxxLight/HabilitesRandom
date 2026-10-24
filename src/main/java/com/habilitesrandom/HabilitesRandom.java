@@ -5,6 +5,7 @@ import com.habilitesrandom.content.BuiltinContent;
 import com.habilitesrandom.core.CoreServices;
 import com.habilitesrandom.registry.DefaultContentRegistrar;
 import com.habilitesrandom.registry.CatalogValidator;
+import com.habilitesrandom.config.server.ServerConfigStore;
 import com.habilitesrandom.network.ModNetworking;
 import com.habilitesrandom.registry.AddonLoader;
 import net.fabricmc.api.ModInitializer;
@@ -19,6 +20,7 @@ public final class HabilitesRandom implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ServerConfigStore.reload();
         ModNetworking.register();
         PlayerDataLifecycle.register();
         BuiltinContent.register(new DefaultContentRegistrar(CoreServices.catalog(), MOD_ID, CoreServices.API_VERSION));

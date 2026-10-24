@@ -72,11 +72,11 @@ public final class HubController {
             }
         }
 
-        // Prompt 3 will send validated action requests. Consuming now keeps the mappings inert and clean.
-        for (int slot = 0; slot < 5; slot++) {
-            while (ModKeyBindings.globalAction(slot).consumeClick()) {
-                // No gameplay action exists yet; the server would validate it in Prompt 3.
+        if (client.gui.screen() == null) {
+            for (int slot = 0; slot < 4; slot++) {
+                while (ModKeyBindings.globalAction(slot).consumeClick()) ClientNetworking.sendAbility(slot);
             }
+            while (ModKeyBindings.globalAction(4).consumeClick()) ClientNetworking.sendPowerfulForm();
         }
     }
 }

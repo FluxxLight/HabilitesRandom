@@ -13,6 +13,7 @@ public final class ModNetworking {
         PayloadTypeRegistry.serverboundPlay().register(ProfileRequestPayload.TYPE, ProfileRequestPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(ActionRequestPayload.TYPE, ActionRequestPayload.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(ProfileSyncPayload.TYPE, ProfileSyncPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(RandomizerResultPayload.TYPE, RandomizerResultPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(ProfileRequestPayload.TYPE,
                 (payload, context) -> NetworkSync.sendProfile(context.player()));

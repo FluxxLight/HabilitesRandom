@@ -1,6 +1,9 @@
 package com.habilitesrandom.screen;
 
 import com.habilitesrandom.client.ui.HubButton;
+import com.habilitesrandom.client.net.ClientNetworking;
+import com.habilitesrandom.client.net.ClientProfileCache;
+import com.habilitesrandom.network.RandomizerResultPayload;
 import com.habilitesrandom.client.ui.UiAnimation;
 import com.habilitesrandom.client.ui.UiLayout;
 import com.habilitesrandom.client.ui.UiText;
@@ -15,6 +18,11 @@ import java.util.List;
 public final class RandomizerScreen extends AbstractHubScreen {
     private UiLayout.Rect portrait;
     private UiLayout.Rect details;
+    private HubButton startButton;
+    private State state = State.IDLE;
+    private long stateAt;
+    private RandomizerResultPayload result;
+    private enum State { IDLE, ROLLING, REVEAL, DENIED }
 
     public RandomizerScreen(Screen parent) {
         super(Component.translatable("habilitesrandom.page.randomizer"), parent);
@@ -44,14 +52,27 @@ public final class RandomizerScreen extends AbstractHubScreen {
 
         UiLayout.Rect footer = layout().footer();
         List<UiLayout.Rect> actions = UiLayout.splitColumns(footer, 2, 8);
-        addRenderableWidget(new HubButton(actions.get(0).x(), actions.get(0).y(),
+        startButton = new HubButton(actions.get(0).x(), actions.get(0).y(),
                 actions.get(0).width(), actions.get(0).height(),
-                Component.translatable("habilitesrandom.randomizer.start"), Component.empty(),
-                UiTheme.GOLD, false, button -> {
-                }, Component.translatable("habilitesrandom.common.available_prompt", 3)));
+                Component.translatable(ClientProfileCache.hasCharacter() ? "habilitesrandom.randomizer.owned" : "habilitesrandom.randomizer.roll"), Component.empty(),
+                UiTheme.GOLD, false, button -> beginRoll(), null);
+        startButton.active = !ClientProfileCache.hasCharacter() && state == State.IDLE;
+        addRenderableWidget(startButton);
         addRenderableWidget(HubButton.compact(actions.get(1).x(), actions.get(1).y(),
                 actions.get(1).width(), actions.get(1).height(),
                 Component.translatable("habilitesrandom.common.back"), UiTheme.CYAN, true, this::onClose, null));
+    }
+
+    private void beginRoll() {
+        if (state != State.IDLE || ClientProfileCache.hasCharacter()) return;
+        state = State.ROLLING; stateAt = System.currentTimeMillis(); startButton.active = false;
+        ClientNetworking.requestRandomizer();
+    }
+
+    @Override public void tick() {
+        super.tick();
+        RandomizerResultPayload incoming = ClientProfileCache.consumeRandomizerResult();
+        if (incoming != null) { result=incoming; state=incoming.success()?State.REVEAL:State.DENIED; stateAt=System.currentTimeMillis(); ClientNetworking.requestProfile(); }
     }
 
     @Override
@@ -87,10 +108,10 @@ public final class RandomizerScreen extends AbstractHubScreen {
         UiTheme.diamond(graphics, centerX, centerY, radius, 0x33182A50);
         UiTheme.diamond(graphics, centerX, centerY, Math.max(3, radius / 6),
                 UiTheme.alpha(UiTheme.GOLD, 0.85F));
-        UiText.centered(graphics, font, "?", centerX, centerY - font.lineHeight / 2,
-                radius, UiTheme.GOLD);
+        UiText.centered(graphics, font, state == State.REVEAL && result != null ? result.characterName() : state == State.ROLLING ? rollingName(now) : "?", centerX, centerY - font.lineHeight / 2,
+                Math.max(radius * 2, portrait.width() - 20), state == State.REVEAL && result != null ? result.rarityColor() : UiTheme.GOLD);
         UiText.centered(graphics, font,
-                Component.translatable("habilitesrandom.randomizer.preparing").getString(),
+                (state == State.REVEAL ? Component.translatable("habilitesrandom.randomizer.received").getString() : state == State.ROLLING ? Component.translatable("habilitesrandom.randomizer.rolling").getString() : Component.translatable("habilitesrandom.randomizer.preparing").getString()),
                 centerX, portrait.bottom() - 14, portrait.width() - 12, UiTheme.TEXT_DIM);
         graphics.disableScissor();
     }
@@ -128,10 +149,21 @@ public final class RandomizerScreen extends AbstractHubScreen {
             int rowY = y + index * rowHeight;
             graphics.fill(x, rowY, x + width, rowY + Math.max(1, rowHeight - 2),
                     index % 2 == 0 ? 0x25152542 : 0x18101E32);
-            UiText.keyValue(graphics, font, Component.translatable(labels[index]).getString(), "—",
+            String value = detailValue(index);
+            UiText.keyValue(graphics, font, Component.translatable(labels[index]).getString(), value,
                     x + 6, rowY + Math.max(0, (rowHeight - font.lineHeight - 2) / 2), width - 12,
                     UiTheme.TEXT_DIM, UiTheme.GOLD);
         }
         graphics.disableScissor();
     }
+    private String rollingName(long now) {
+        var all = com.habilitesrandom.core.CoreServices.characters().getAll();
+        if (all.isEmpty()) return "…";
+        return all.get((int)((now / 90L) % all.size())).displayName();
+    }
+    private String detailValue(int index) {
+        if (result == null || !result.success()) return state == State.DENIED && index == 0 ? Component.translatable("habilitesrandom.randomizer.denied." + result.reason()).getString() : "—";
+        return switch(index){case 0->result.characterName();case 1->result.animeName();case 2->result.category();case 3->result.rarityName();case 4->Component.translatable("habilitesrandom.randomizer.server_decided").getString();default->"—";};
+    }
+
 }

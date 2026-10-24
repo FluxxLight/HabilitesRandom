@@ -1,6 +1,7 @@
 package com.habilitesrandom.client.net;
 
 import com.habilitesrandom.network.ProfileSyncPayload;
+import com.habilitesrandom.network.RandomizerResultPayload;
 import com.habilitesrandom.util.ProfileValues;
 
 /** Read-only client mirror of the last server snapshot. Never used as gameplay authority. */
@@ -9,6 +10,7 @@ public final class ClientProfileCache {
     private static volatile int[] cooldownSeconds = new int[ProfileValues.MAX_ABILITIES];
     private static volatile long receivedAt = 0L;
     private static volatile boolean linked;
+    private static volatile RandomizerResultPayload randomizerResult;
 
     private ClientProfileCache() {
     }
@@ -20,11 +22,15 @@ public final class ClientProfileCache {
         linked = true;
     }
 
+    public static void acceptRandomizerResult(RandomizerResultPayload result) { randomizerResult = result; }
+    public static RandomizerResultPayload consumeRandomizerResult() { var result=randomizerResult; randomizerResult=null; return result; }
+
     public static void clear() {
         snapshot = ProfileSyncPayload.empty();
         cooldownSeconds = new int[ProfileValues.MAX_ABILITIES];
         receivedAt = 0L;
         linked = false;
+        randomizerResult = null;
     }
 
     public static ProfileSyncPayload get() {
