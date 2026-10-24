@@ -1,0 +1,10 @@
+package com.habilitesrandom;
+import com.habilitesrandom.api.*;import com.habilitesrandom.ability.CooldownManager;import com.habilitesrandom.combat.*;import com.habilitesrandom.content.BuiltinContent;import com.habilitesrandom.data.PlayerProfile;import com.habilitesrandom.registry.*;import org.junit.jupiter.api.*;import static org.junit.jupiter.api.Assertions.*;
+class CharacterSystemTest {
+ ContentCatalog catalog; CharacterRegistry characters;
+ @BeforeEach void setup(){catalog=new ContentCatalog();BuiltinContent.register(new DefaultContentRegistrar(catalog,"test",1));characters=new CharacterRegistry(catalog);}
+ @Test void completeRosterIsConsistent(){CatalogValidator.validate(catalog);assertEquals(91,characters.getAll().size());assertEquals(364,catalog.size(ContentTypes.ABILITY));assertEquals(91,catalog.size(ContentTypes.TRANSFORMATION));assertTrue(characters.totalWeight()>0);for(var c:characters.getAll()){assertEquals(4,c.abilityIds().size());assertTrue(c.drawWeight()>0);assertNotEquals(StrengthCategory.UNKNOWN,c.category());}}
+ @Test void rarityAndStrengthAreIndependent(){assertFalse(characters.getByRarity(HabilitesRandom.id("mythic")).isEmpty());assertTrue(characters.getByCategory(StrengthCategory.WEAK).stream().anyMatch(c->c.rarityId().equals(HabilitesRandom.id("mythic"))));}
+ @Test void cooldownsAreIndependentAndPersistent(){var p=PlayerProfile.empty(1);p=CooldownManager.start(p,2,200,1000);assertTrue(CooldownManager.ready(p,0,1001));assertFalse(CooldownManager.ready(p,2,1001));assertEquals(9999,CooldownManager.remainingMillis(p,2,1001));assertTrue(CooldownManager.ready(p,2,11000));}
+ @Test void geometryAndSafetyAreBounded(){assertTrue(CombatGeometry.contains(AreaShape.CIRCLE,0,0,0,1,0,2,0,1,10,3));assertFalse(CombatGeometry.contains(AreaShape.CONE,0,0,0,1,0,-2,0,0,10,5));var a=new AbilityRegistry(catalog).get(HabilitesRandom.id("satoru_gojo/ultimate_technique")).orElseThrow();var plan=AbilityExecutionPlan.create(a,new CombatPolicy(true,true,8,5,12));assertEquals(5,plan.blockLimit());assertEquals(8,plan.targetLimit());assertTrue(plan.effectiveRange()<=12);}
+}

@@ -1,6 +1,9 @@
 package com.habilitesrandom.screen;
 
 import com.habilitesrandom.client.input.ModKeyBindings;
+import com.habilitesrandom.api.*;
+import com.habilitesrandom.core.CoreServices;
+import com.habilitesrandom.util.ProfileValues;
 import com.habilitesrandom.client.net.ClientNetworking;
 import com.habilitesrandom.client.net.ClientProfileCache;
 import com.habilitesrandom.client.ui.HubButton;
@@ -115,12 +118,29 @@ public final class AbilityScreen extends AbstractHubScreen {
                 identity.y() + 26, width, color);
     }
 
+    private AbilityDefinition displayedAbility(int slot) {
+        var characterId = ProfileValues.parseId(ClientProfileCache.characterId());
+        if (characterId == null) return null;
+        CharacterDefinition character = CoreServices.characters().get(characterId).orElse(null);
+        if (character == null || slot < 0 || slot >= character.abilityIds().size()) return null;
+        return CoreServices.abilities().get(character.abilityIds().get(slot)).orElse(null);
+    }
+
     private void drawAbilityCard(GuiGraphicsExtractor graphics, UiLayout.Rect rect, int slot) {
         UiTheme.card(graphics, rect.x(), rect.y(), rect.width(), rect.height(),
                 slot % 2 == 0 ? UiTheme.CYAN : UiTheme.PURPLE, 0.75F);
         UiText.label(graphics, font, Component.translatable("habilitesrandom.ability.slot", slot + 1).getString(),
                 rect.x() + 9, rect.y() + 7, rect.width() - 18, UiTheme.TEXT_DIM);
-        UiText.label(graphics, font, "—", rect.x() + 9, rect.y() + 21, rect.width() - 18, UiTheme.TEXT);
+        AbilityDefinition ability = displayedAbility(slot);
+        String name = ability == null ? "—" : ability.displayName();
+        UiText.label(graphics, font, name, rect.x() + 9, rect.y() + 21, rect.width() - 18, UiTheme.TEXT);
+        if (ability != null && rect.height() >= 52) {
+            UiText.label(graphics, font, ability.description(), rect.x() + 9, rect.y() + 34,
+                    rect.width() - 18, UiTheme.TEXT_SOFT);
+            String cooldown = (ability.cooldownTicks() / 20) + "s";
+            graphics.text(font, cooldown, rect.right() - 8 - font.width(cooldown), rect.bottom() - 23,
+                    UiTheme.TEXT_DIM, false);
+        }
         String key = ModKeyBindings.actionLabel(slot).getString();
         graphics.text(font, key, rect.right() - 8 - font.width(key), rect.y() + 7, UiTheme.GOLD, false);
         int remaining = ClientProfileCache.cooldownRemaining(slot);

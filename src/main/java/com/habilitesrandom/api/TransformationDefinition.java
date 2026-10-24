@@ -1,21 +1,16 @@
 package com.habilitesrandom.api;
 
 import net.minecraft.resources.Identifier;
+import java.util.List;
 
-/** Declarative future transformation; no transformation logic runs in this stage. */
-public record TransformationDefinition(
-        Identifier id,
-        String displayName,
-        String translationKey,
-        int durationTicks,
-        int maxUses
-) implements CatalogEntry {
+/** One timed powerful form. Daily-use policy is intentionally deferred to Prompt 5. */
+public record TransformationDefinition(Identifier id, String displayName, String description, int durationTicks,
+        int cooldownTicks, double damageMultiplier, double speedMultiplier, double defenseMultiplier,
+        List<EffectSpec> effects, String particleId, String soundId) implements CatalogEntry {
     public TransformationDefinition {
-        if (id == null || displayName == null || displayName.isBlank()) {
-            throw new IllegalArgumentException("Transformation definitions require an id and display name");
-        }
-        durationTicks = Math.max(0, durationTicks);
-        maxUses = Math.max(0, maxUses);
-        translationKey = translationKey == null ? "" : translationKey;
+        if(id==null||displayName==null||displayName.isBlank()||durationTicks<=0||cooldownTicks<=0) throw new IllegalArgumentException("Invalid transformation");
+        description=description==null?"":description; damageMultiplier=bound(damageMultiplier); speedMultiplier=bound(speedMultiplier); defenseMultiplier=bound(defenseMultiplier);
+        effects=effects==null?List.of():List.copyOf(effects); particleId=particleId==null?"":particleId; soundId=soundId==null?"":soundId;
     }
+    private static double bound(double value){ if(!Double.isFinite(value)) throw new IllegalArgumentException("Invalid modifier"); return Math.max(.1,Math.min(10,value)); }
 }

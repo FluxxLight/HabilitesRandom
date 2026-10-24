@@ -39,6 +39,8 @@ public final class ClientProfileCache {
         return snapshot.core().hasCharacter();
     }
 
+    public static String characterId() { return snapshot.core().characterId(); }
+
     public static String characterName() {
         String name = snapshot.core().characterName();
         return name.isBlank() ? snapshot.core().characterId() : name;

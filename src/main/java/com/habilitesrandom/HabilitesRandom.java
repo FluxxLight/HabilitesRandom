@@ -1,6 +1,10 @@
 package com.habilitesrandom;
 
 import com.habilitesrandom.data.PlayerDataLifecycle;
+import com.habilitesrandom.content.BuiltinContent;
+import com.habilitesrandom.core.CoreServices;
+import com.habilitesrandom.registry.DefaultContentRegistrar;
+import com.habilitesrandom.registry.CatalogValidator;
 import com.habilitesrandom.network.ModNetworking;
 import com.habilitesrandom.registry.AddonLoader;
 import net.fabricmc.api.ModInitializer;
@@ -17,7 +21,9 @@ public final class HabilitesRandom implements ModInitializer {
     public void onInitialize() {
         ModNetworking.register();
         PlayerDataLifecycle.register();
+        BuiltinContent.register(new DefaultContentRegistrar(CoreServices.catalog(), MOD_ID, CoreServices.API_VERSION));
         AddonLoader.load();
+        CatalogValidator.validate(CoreServices.catalog());
         LOGGER.info("HabilitesRandom for Minecraft 26.3 initialized");
     }
 
