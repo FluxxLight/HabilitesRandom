@@ -16,6 +16,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -104,54 +105,75 @@ public final class SettingsScreen extends AbstractHubScreen {
             case GENERAL -> 3;
         };
         int rowsY = body.y() + descriptionHeight;
-        int rowsHeight = Math.max(40, body.bottom() - rowsY - pad);
-        List<UiLayout.Rect> rows = UiLayout.splitRows(
+        int rowsHeight = Math.max(36, body.bottom() - rowsY - pad);
+        boolean compactGrid = body.height() < 190 && body.width() >= 180;
+        int columns = compactGrid ? (rowCount >= 7 ? 3 : 2) : 1;
+        int gridRows = (rowCount + columns - 1) / columns;
+        List<UiLayout.Rect> rowRects = UiLayout.splitRows(
                 new UiLayout.Rect(body.x() + pad, rowsY, body.width() - 2 * pad, rowsHeight),
-                rowCount, rowGap);
+                gridRows, rowGap);
+        List<UiLayout.Rect> slots = new ArrayList<>(rowCount);
+        for (UiLayout.Rect rowRect : rowRects) {
+            List<UiLayout.Rect> columnsForRow = UiLayout.splitColumns(rowRect, columns, rowGap);
+            for (int column = 0; column < columns && slots.size() < rowCount; column++) {
+                slots.add(columnsForRow.get(column));
+            }
+        }
 
         switch (category) {
             case CONTROLS -> {
-                addKeyRow(rows.get(0), 0);
-                addKeyRow(rows.get(1), 1);
-                addKeyRow(rows.get(2), 2);
-                addKeyRow(rows.get(3), 3);
-                addKeyRow(rows.get(4), 4);
-                List<UiLayout.Rect> actions = UiLayout.splitColumns(
-                        new UiLayout.Rect(rows.get(5).x(), rows.get(5).y(), rows.get(5).width(),
-                                rows.get(6).bottom() - rows.get(5).y()), 2, 8);
-                addRenderableWidget(HubButton.compact(actions.get(0).x(), actions.get(0).y(),
-                        actions.get(0).width(), actions.get(0).height(),
-                        Component.translatable("habilitesrandom.settings.controls.reset"),
-                        UiTheme.GOLD, true, () -> {
-                            ModKeyBindings.resetDefaults();
-                            listeningSlot = -1;
-                            rebuildWidgets();
-                        }, null));
-                addRenderableWidget(HubButton.compact(actions.get(1).x(), actions.get(1).y(),
-                        actions.get(1).width(), actions.get(1).height(),
-                        Component.translatable("habilitesrandom.settings.controls.vanilla"),
-                        UiTheme.CYAN, true,
-                        () -> navigate(new KeyBindsScreen(this, minecraft.options)), null));
+                addKeyRow(slots.get(0), 0);
+                addKeyRow(slots.get(1), 1);
+                addKeyRow(slots.get(2), 2);
+                addKeyRow(slots.get(3), 3);
+                addKeyRow(slots.get(4), 4);
+                if (compactGrid) {
+                    addActionButton(slots.get(5), Component.translatable("habilitesrandom.settings.controls.reset"),
+                            UiTheme.GOLD, () -> {
+                                ModKeyBindings.resetDefaults();
+                                listeningSlot = -1;
+                                rebuildWidgets();
+                            });
+                    addActionButton(slots.get(6), Component.translatable("habilitesrandom.settings.controls.vanilla"),
+                            UiTheme.CYAN, () -> navigate(new KeyBindsScreen(this, minecraft.options)));
+                } else {
+                    List<UiLayout.Rect> actions = UiLayout.splitColumns(
+                            new UiLayout.Rect(slots.get(5).x(), slots.get(5).y(), slots.get(5).width(),
+                                    slots.get(6).bottom() - slots.get(5).y()), 2, 8);
+                    addActionButton(actions.get(0), Component.translatable("habilitesrandom.settings.controls.reset"),
+                            UiTheme.GOLD, () -> {
+                                ModKeyBindings.resetDefaults();
+                                listeningSlot = -1;
+                                rebuildWidgets();
+                            });
+                    addActionButton(actions.get(1), Component.translatable("habilitesrandom.settings.controls.vanilla"),
+                            UiTheme.CYAN, () -> navigate(new KeyBindsScreen(this, minecraft.options)));
+                }
             }
             case INTERFACE -> {
-                addToggleRow(rows.get(0), "habilitesrandom.settings.interface.particles",
+                addToggleRow(slots.get(0), "habilitesrandom.settings.interface.particles",
                         () -> config.interfaceParticles, value -> config.interfaceParticles = value);
-                addToggleRow(rows.get(1), "habilitesrandom.settings.interface.animations",
+                addToggleRow(slots.get(1), "habilitesrandom.settings.interface.animations",
                         () -> config.interfaceAnimations, value -> config.interfaceAnimations = value);
-                addToggleRow(rows.get(2), "habilitesrandom.settings.interface.hud",
+                addToggleRow(slots.get(2), "habilitesrandom.settings.interface.hud",
                         () -> config.hudVisible, value -> config.hudVisible = value);
-                addToggleRow(rows.get(3), "habilitesrandom.settings.interface.compact_hud",
+                addToggleRow(slots.get(3), "habilitesrandom.settings.interface.compact_hud",
                         () -> config.compactHud, value -> config.compactHud = value);
-                addToggleRow(rows.get(4), "habilitesrandom.settings.interface.glow",
+                addToggleRow(slots.get(4), "habilitesrandom.settings.interface.glow",
                         () -> config.hudGlow, value -> config.hudGlow = value);
             }
             case EFFECTS -> {
-                addToggleRow(rows.get(0), "habilitesrandom.settings.effects.effects",
+                addToggleRow(slots.get(0), "habilitesrandom.settings.effects.effects",
                         () -> config.visualEffects, value -> config.visualEffects = value);
-                addRenderableWidget(new HubButton(rows.get(1).x(), rows.get(1).y(), rows.get(1).width(),
-                        rows.get(1).height(),
-                        Component.translatable("habilitesrandom.settings.effects.intensity"),
-                        Component.translatable(config.intensity().translationKey()), UiTheme.GOLD, true,
+                UiLayout.Rect intensityRect = slots.get(1);
+                boolean compact = intensityRect.height() < 34;
+                Component intensity = Component.translatable(config.intensity().translationKey());
+                Component title = compact
+                        ? Component.translatable("habilitesrandom.settings.effects.intensity").copy()
+                                .append(Component.literal("   ")).append(intensity)
+                        : Component.translatable("habilitesrandom.settings.effects.intensity");
+                addRenderableWidget(new HubButton(intensityRect.x(), intensityRect.y(), intensityRect.width(),
+                        intensityRect.height(), title, compact ? Component.empty() : intensity, UiTheme.GOLD, true,
                         button -> {
                             config.cycleIntensity();
                             HabilitesRandomClient.saveConfig();
@@ -159,20 +181,25 @@ public final class SettingsScreen extends AbstractHubScreen {
                         }, null));
             }
             case AUDIO -> {
-                addToggleRow(rows.get(0), "habilitesrandom.settings.audio.sounds",
+                addToggleRow(slots.get(0), "habilitesrandom.settings.audio.sounds",
                         () -> config.interfaceSounds, value -> config.interfaceSounds = value);
-                addToggleRow(rows.get(1), "habilitesrandom.settings.audio.ambient",
+                addToggleRow(slots.get(1), "habilitesrandom.settings.audio.ambient",
                         () -> config.ambientUiAudio, value -> config.ambientUiAudio = value);
             }
             case GENERAL -> {
-                addToggleRow(rows.get(0), "habilitesrandom.settings.general.hub_on_join",
+                addToggleRow(slots.get(0), "habilitesrandom.settings.general.hub_on_join",
                         () -> config.openHubOnJoin, value -> config.openHubOnJoin = value);
-                addToggleRow(rows.get(1), "habilitesrandom.settings.general.hub_hint",
+                addToggleRow(slots.get(1), "habilitesrandom.settings.general.hub_hint",
                         () -> config.showHubHint, value -> config.showHubHint = value);
-                addToggleRow(rows.get(2), "habilitesrandom.settings.general.tooltips",
+                addToggleRow(slots.get(2), "habilitesrandom.settings.general.tooltips",
                         () -> config.advancedTooltips, value -> config.advancedTooltips = value);
             }
         }
+    }
+
+    private void addActionButton(UiLayout.Rect rect, Component label, int accent, Runnable action) {
+        addRenderableWidget(HubButton.compact(rect.x(), rect.y(), rect.width(), rect.height(),
+                label, accent, true, action, null));
     }
 
     private void addKeyRow(UiLayout.Rect rect, int slot) {
