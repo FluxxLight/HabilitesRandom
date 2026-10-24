@@ -32,7 +32,7 @@ public final class RerollScreen extends AbstractHubScreen {
         State current=State.from(ClientProfileCache.rerollState());
         actionButton = new HubButton(actions.get(0).x(), actions.get(0).y(), actions.get(0).width(), actions.get(0).height(),
                 Component.translatable(confirming ? "habilitesrandom.reroll.confirm" : "habilitesrandom.reroll.action"), Component.empty(), UiTheme.GOLD, false, button -> {
-                    if (!confirming) { confirming=true; rebuildWidgets(); } else { ClientNetworking.requestReroll(); actionButton.active=false; }
+                    if (!confirming) { confirming=true; refreshButtons(); } else { ClientNetworking.requestReroll(); actionButton.active=false; }
                 }, null);
         actionButton.active = current == State.AVAILABLE || current == State.FINAL_AVAILABLE;
         addRenderableWidget(actionButton);
@@ -41,8 +41,8 @@ public final class RerollScreen extends AbstractHubScreen {
                 Component.translatable("habilitesrandom.common.back"), UiTheme.CYAN, true, this::onClose, null));
     }
 
-    private void rebuildWidgets(){ clearWidgets(); buildContent(); }
-    @Override public void tick(){super.tick();var incoming=ClientProfileCache.consumeRandomizerResult();if(incoming!=null){result=incoming;confirming=false;ClientNetworking.requestProfile();rebuildWidgets();}}
+    private void refreshButtons(){ clearWidgets(); buildContent(); }
+    @Override public void tick(){super.tick();var incoming=ClientProfileCache.consumeRandomizerResult();if(incoming!=null){result=incoming;confirming=false;ClientNetworking.requestProfile();refreshButtons();}}
 
     @Override
     protected void drawContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
