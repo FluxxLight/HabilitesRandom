@@ -92,6 +92,7 @@ jobs:
           cp gradle-build.log ci-failure.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase --autostash origin "${{ github.ref_name }}"
           git add ci-failure.txt
           git commit -m 'Archive build failure details [skip ci]'
           git push origin "HEAD:${{ github.ref_name }}"
