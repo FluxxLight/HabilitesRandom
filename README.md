@@ -22,6 +22,8 @@ Minecraft 26.x is unobfuscated, so this project uses the non-remapping `net.fabr
 ```bash
 ./gradlew build
 ./gradlew test
+# Requires a display. CI uses Xvfb + EGL for Minecraft 26.3's SDL window.
+./gradlew runClientGameTest
 ```
 
 The built mod is written to `build/libs/`. On a successful branch build, GitHub Actions also copies the verified remapped jar and its SHA-256 checksum into `dev-builds/`, making the development build reproducible from the repository itself.

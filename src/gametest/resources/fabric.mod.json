@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "habilitesrandom-gametest",
+  "version": "1.0.0",
+  "name": "HabilitesRandom client smoke tests",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "com.habilitesrandom.gametest.HabilitesRandomClientGameTest"
+    ]
+  },
+  "depends": {
+    "habilitesrandom": "*",
+    "fabric-api": "*"
+  }
+}

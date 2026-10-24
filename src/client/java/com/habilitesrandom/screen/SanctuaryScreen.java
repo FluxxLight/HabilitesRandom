@@ -48,7 +48,7 @@ public final class SanctuaryScreen extends AbstractHubScreen {
         List<UiLayout.Rect> actions = UiLayout.splitColumns(footer, 2, 8);
         addRenderableWidget(new HubButton(actions.get(0).x(), actions.get(0).y(),
                 actions.get(0).width(), actions.get(0).height(),
-                Component.literal("RASTREAR SANTUÁRIO"), Component.empty(), UiTheme.GREEN,
+                Component.translatable("habilitesrandom.sanctuary.track"), Component.empty(), UiTheme.GREEN,
                 false, button -> {
                 }, Component.translatable("habilitesrandom.common.available_prompt", 4)));
         addRenderableWidget(HubButton.compact(actions.get(1).x(), actions.get(1).y(),
@@ -91,8 +91,9 @@ public final class SanctuaryScreen extends AbstractHubScreen {
         UiText.centered(graphics, font,
                 Component.translatable("habilitesrandom.sanctuary.map").getString(),
                 centerX, map.y() + 7, map.width() - 20, UiTheme.TEXT_DIM);
-        UiText.centered(graphics, font, "SINAL: —", centerX, map.bottom() - 16,
-                map.width() - 20, UiTheme.GREEN);
+        UiText.centered(graphics, font,
+                Component.translatable("habilitesrandom.sanctuary.signal", "—").getString(),
+                centerX, map.bottom() - 16, map.width() - 20, UiTheme.GREEN);
     }
 
     private void drawInfo(GuiGraphicsExtractor graphics) {

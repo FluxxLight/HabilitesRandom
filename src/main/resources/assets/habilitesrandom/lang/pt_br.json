@@ -100,5 +100,11 @@
   "habilitesrandom.hud.no_profile": "Sem perfil do servidor",
   "habilitesrandom.hud.form": "FORMA",
   "habilitesrandom.hud.uses": "USOS",
-  "habilitesrandom.hud.ready": "PRONTO"
+  "habilitesrandom.hud.ready": "PRONTO",
+  "habilitesrandom.sanctuary.track": "RASTREAR SANTUÁRIO",
+  "habilitesrandom.sanctuary.signal": "SINAL: %s",
+  "habilitesrandom.hud.title": "HABILITESRANDOM",
+  "habilitesrandom.hud.waiting_server": "Aguardando servidor",
+  "habilitesrandom.hud.no_rarity": "Sem raridade",
+  "habilitesrandom.hud.form_empty": "FORMA —"
 }

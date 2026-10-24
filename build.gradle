@@ -36,13 +36,28 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-// Tests exercise the responsive client layout helpers as well as the common/server classes.
+// A real client boot is available as a separate CI smoke test, not as part of `build`.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'habilitesrandom-gametest'
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+        clearRunDirectory = true
+    }
+}
+
+// Unit tests and client game tests exercise the responsive client helpers as well as common/server code.
 sourceSets {
     test {
         compileClasspath += sourceSets.client.output
         runtimeClasspath += sourceSets.client.output
     }
 }
+
+sourceSets.gametest.compileClasspath += sourceSets.client.output
+sourceSets.gametest.runtimeClasspath += sourceSets.client.output
 
 processResources {
     inputs.property "version", project.version

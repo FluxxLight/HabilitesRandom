@@ -1,0 +1,82 @@
+name: HabilitesRandom client smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'arena/**'
+      - 'main'
+    paths-ignore:
+      - 'dev-builds/**'
+      - 'qa/**'
+      - '**/*.md'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: client-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  client-smoke:
+    name: Boot client and exercise HUB
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message || '', '[skip ci]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Install headless EGL display
+        run: sudo apt-get update && sudo apt-get install -y xvfb libegl1 libegl-mesa0
+
+      - name: Run Fabric client game test
+        env:
+          CI: "true"
+          # Minecraft 26.3 uses SDL; Xvfb's GLX has no suitable sRGB visual, EGL does.
+          SDL_VIDEO_FORCE_EGL: "1"
+        shell: bash
+        run: |
+          chmod +x gradlew
+          set -o pipefail
+          xvfb-run -a -s "-screen 0 1280x720x24" \
+            ./gradlew runClientGameTest --no-daemon --console=plain --stacktrace 2>&1 | tee client-gametest.log
+
+      - name: Collect and publish screenshots
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa/screenshots
+          find build/gametest run/screenshots -type f -name '*.png' -exec cp -t qa/screenshots/ {} + 2>/dev/null || true
+          printf 'Screenshots captured: %s\n' "$(find qa/screenshots -type f -name '*.png' | wc -l)" >> "$GITHUB_STEP_SUMMARY"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase --autostash origin "${{ github.ref_name }}"
+          git add qa/screenshots
+          if git diff --cached --quiet; then
+            echo 'No new screenshots'
+          else
+            git commit -m 'Add HabilitesRandom client smoke-test screenshots [skip ci]'
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi
+
+      - name: Upload client test evidence
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: habilitesrandom-client-evidence
+          path: |
+            qa/screenshots/*.png
+            client-gametest.log
+            build/run/clientGameTest/logs/latest.log
+          if-no-files-found: ignore

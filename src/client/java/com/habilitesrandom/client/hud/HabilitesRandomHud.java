@@ -13,6 +13,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 /** Small, optional HUD shell. It reads only the last server-approved snapshot. */
@@ -50,7 +51,9 @@ public final class HabilitesRandomHud {
         Font font = client.font;
         int cx = x + 8;
         int cy = y + 6;
-        UiText.label(graphics, font, "HABILITESRANDOM", cx, cy, width - 16, UiTheme.CYAN);
+        UiText.label(graphics, font,
+                Component.translatable("habilitesrandom.hud.title").getString(),
+                cx, cy, width - 16, UiTheme.CYAN);
         cy += font.lineHeight + 3;
 
         if (compact) {
@@ -61,12 +64,14 @@ public final class HabilitesRandomHud {
 
         String character = ClientProfileCache.hasCharacter()
                 ? ClientProfileCache.characterName()
-                : ClientProfileCache.isLinked() ? "—" : "Aguardando servidor";
+                : ClientProfileCache.isLinked() ? "—"
+                : Component.translatable("habilitesrandom.hud.waiting_server").getString();
         UiText.label(graphics, font, character, cx, cy, width - 16, UiTheme.TEXT);
         cy += font.lineHeight + 2;
 
         String rarity = ClientProfileCache.rarityName();
-        UiText.label(graphics, font, rarity.isBlank() ? "Sem raridade" : rarity,
+        UiText.label(graphics, font,
+                rarity.isBlank() ? Component.translatable("habilitesrandom.hud.no_rarity").getString() : rarity,
                 cx, cy, width - 16, rarity.isBlank() ? UiTheme.TEXT_DIM : UiTheme.GOLD);
         cy += font.lineHeight + 4;
 
@@ -80,14 +85,18 @@ public final class HabilitesRandomHud {
             int color = remaining <= 0 ? UiTheme.GREEN : UiTheme.CYAN;
             UiTheme.progress(graphics, barX, cy + 2, barWidth, 4, value, color, opacity);
             if (remaining > 0) {
-                graphics.text(font, Integer.toString(remaining), x + width - 7, cy + 1, UiTheme.TEXT_DIM, false);
+                String seconds = Integer.toString(remaining);
+                graphics.text(font, seconds, x + width - 7 - font.width(seconds), cy + 1,
+                        UiTheme.TEXT_DIM, false);
             }
             cy += 10;
         }
 
         String form = ClientProfileCache.transformationName();
         String uses = Integer.toString(ClientProfileCache.transformationUses());
-        UiText.label(graphics, font, form.isBlank() ? "FORMA —" : form, cx, cy, width - 30, UiTheme.PURPLE);
+        UiText.label(graphics, font,
+                form.isBlank() ? Component.translatable("habilitesrandom.hud.form_empty").getString() : form,
+                cx, cy, width - 30, UiTheme.PURPLE);
         graphics.text(font, uses, x + width - 8 - font.width(uses), cy, UiTheme.TEXT_SOFT, false);
     }
 }
