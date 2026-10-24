@@ -33,6 +33,11 @@ public final class HubButton extends Button {
         this(x, y, width, height, message, subtitle, accent, enabled, button -> action.run(), null);
     }
 
+    public HubButton(int x, int y, int width, int height, Component message, Component subtitle,
+                     int accent, boolean enabled, Runnable action, Component tooltip) {
+        this(x, y, width, height, message, subtitle, accent, enabled, button -> action.run(), tooltip);
+    }
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
