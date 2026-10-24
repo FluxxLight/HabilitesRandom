@@ -70,6 +70,32 @@ jobs:
             git push origin "HEAD:${{ github.ref_name }}"
           fi
 
+      - name: Publish failure log to this branch
+        if: failure()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa/failure
+          cp client-gametest.log qa/failure/client-gametest.log 2>/dev/null || true
+          if [ -f build/run/clientGameTest/logs/latest.log ]; then
+            cp build/run/clientGameTest/logs/latest.log qa/failure/latest.log
+          fi
+          {
+            echo '## Client smoke-test failure'
+            echo '### Gradle/client log tail'
+            if [ -f client-gametest.log ]; then tail -n 220 client-gametest.log; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase --autostash origin "${{ github.ref_name }}"
+          git add qa/failure
+          if git diff --cached --quiet; then
+            echo 'No failure log changes'
+          else
+            git commit -m 'Publish client smoke-test failure log [skip ci]'
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi
+
       - name: Upload client test evidence
         if: always()
         uses: actions/upload-artifact@v5
