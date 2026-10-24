@@ -27,6 +27,18 @@ public final class ClientNetworking {
         if (ClientPlayNetworking.canSend(ActionRequestPayload.TYPE)) ClientPlayNetworking.send(new ActionRequestPayload(PlayerAuthorityGate.Action.POWERFUL_FORM.name(), 4));
     }
 
+    public static void requestReroll() {
+        if (ClientPlayNetworking.canSend(ActionRequestPayload.TYPE)) ClientPlayNetworking.send(new ActionRequestPayload(PlayerAuthorityGate.Action.REROLL.name(), -1));
+    }
+
+    public static void requestSanctuaryMap() {
+        if (ClientPlayNetworking.canSend(ActionRequestPayload.TYPE)) ClientPlayNetworking.send(new ActionRequestPayload(PlayerAuthorityGate.Action.BUY_SANCTUARY_MAP.name(), -1));
+    }
+
+    public static void claimSanctuaryReroll() {
+        if (ClientPlayNetworking.canSend(ActionRequestPayload.TYPE)) ClientPlayNetworking.send(new ActionRequestPayload(PlayerAuthorityGate.Action.CLAIM_SANCTUARY_REROLL.name(), -1));
+    }
+
     public static void requestRandomizer() {
         if (ClientPlayNetworking.canSend(ActionRequestPayload.TYPE)) ClientPlayNetworking.send(new ActionRequestPayload(PlayerAuthorityGate.Action.RANDOMIZE.name(), -1));
     }

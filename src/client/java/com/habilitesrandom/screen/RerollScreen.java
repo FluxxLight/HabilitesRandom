@@ -1,6 +1,8 @@
 package com.habilitesrandom.screen;
 
 import com.habilitesrandom.client.net.ClientProfileCache;
+import com.habilitesrandom.client.net.ClientNetworking;
+import com.habilitesrandom.network.RandomizerResultPayload;
 import com.habilitesrandom.client.ui.HubButton;
 import com.habilitesrandom.client.ui.UiLayout;
 import com.habilitesrandom.client.ui.UiText;
@@ -13,6 +15,7 @@ import java.util.List;
 
 /** Visual state machine scaffold for the server-authoritative reroll system in Prompt 4. */
 public final class RerollScreen extends AbstractHubScreen {
+    private boolean confirming; private HubButton actionButton; private RandomizerResultPayload result;
     public RerollScreen(Screen parent) {
         super(Component.translatable("habilitesrandom.page.reroll"), parent);
     }
@@ -26,15 +29,20 @@ public final class RerollScreen extends AbstractHubScreen {
     protected void buildContent() {
         UiLayout.Rect footer = layout().footer();
         List<UiLayout.Rect> actions = UiLayout.splitColumns(footer, 2, 8);
-        addRenderableWidget(new HubButton(actions.get(0).x(), actions.get(0).y(),
-                actions.get(0).width(), actions.get(0).height(),
-                Component.translatable("habilitesrandom.reroll.action"), Component.empty(),
-                UiTheme.GOLD, false, button -> {
-                }, Component.translatable("habilitesrandom.common.available_prompt", 4)));
+        State current=State.from(ClientProfileCache.rerollState());
+        actionButton = new HubButton(actions.get(0).x(), actions.get(0).y(), actions.get(0).width(), actions.get(0).height(),
+                Component.translatable(confirming ? "habilitesrandom.reroll.confirm" : "habilitesrandom.reroll.action"), Component.empty(), UiTheme.GOLD, false, button -> {
+                    if (!confirming) { confirming=true; rebuildWidgets(); } else { ClientNetworking.requestReroll(); actionButton.active=false; }
+                }, null);
+        actionButton.active = current == State.AVAILABLE || current == State.FINAL_AVAILABLE;
+        addRenderableWidget(actionButton);
         addRenderableWidget(HubButton.compact(actions.get(1).x(), actions.get(1).y(),
                 actions.get(1).width(), actions.get(1).height(),
                 Component.translatable("habilitesrandom.common.back"), UiTheme.CYAN, true, this::onClose, null));
     }
+
+    private void rebuildWidgets(){ clearWidgets(); buildContent(); }
+    @Override public void tick(){super.tick();var incoming=ClientProfileCache.consumeRandomizerResult();if(incoming!=null){result=incoming;confirming=false;ClientNetworking.requestProfile();rebuildWidgets();}}
 
     @Override
     protected void drawContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
@@ -51,7 +59,7 @@ public final class RerollScreen extends AbstractHubScreen {
                 headline.x() + headline.width() / 2, headline.y() + 18, headline.width() - 24,
                 state.color);
         UiText.wrapped(graphics, font,
-                Component.translatable(headline.height() < 70
+                Component.translatable(confirming ? "habilitesrandom.reroll.confirm.body" : headline.height() < 70
                         ? "habilitesrandom.reroll.description.short"
                         : "habilitesrandom.reroll.description"),
                 headline.x() + 16, headline.y() + 32, headline.width() - 32,
@@ -91,7 +99,9 @@ public final class RerollScreen extends AbstractHubScreen {
         INITIAL("habilitesrandom.reroll.initial", UiTheme.CYAN),
         AVAILABLE("habilitesrandom.reroll.available", UiTheme.GREEN),
         USED("habilitesrandom.reroll.used", UiTheme.RED),
-        SANCTUARY("habilitesrandom.reroll.sanctuary", UiTheme.PURPLE);
+        SANCTUARY("habilitesrandom.reroll.sanctuary", UiTheme.PURPLE),
+        FINAL_AVAILABLE("habilitesrandom.reroll.final.available", UiTheme.GOLD),
+        EXHAUSTED("habilitesrandom.reroll.exhausted", UiTheme.RED);
 
         private final String titleKey;
         private final int color;
@@ -106,8 +116,10 @@ public final class RerollScreen extends AbstractHubScreen {
                 return INITIAL;
             }
             return switch (wireState) {
-                case "AVAILABLE" -> AVAILABLE;
+                case "FREE_AVAILABLE" -> AVAILABLE;
                 case "SANCTUARY_REQUIRED" -> SANCTUARY;
+                case "SANCTUARY_AVAILABLE" -> FINAL_AVAILABLE;
+                case "EXHAUSTED" -> EXHAUSTED;
                 default -> INITIAL;
             };
         }

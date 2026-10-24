@@ -62,7 +62,7 @@
   "habilitesrandom.reroll.sanctuary": "Encontre um Santuário para conseguir sua última chance.",
   "habilitesrandom.reroll.initial": "Estado inicial",
   "habilitesrandom.reroll.description": "As regras autoritativas de reroll e a recompensa do santuário serão implementadas no Prompt 4.",
-  "habilitesrandom.reroll.action": "REROLL AINDA INDISPONÍVEL",
+  "habilitesrandom.reroll.action": "USAR REROLL",
   "habilitesrandom.sanctuary.title": "SANTUÁRIO",
   "habilitesrandom.sanctuary.description": "A estrutura no mundo, coordenadas e progresso chegam no Prompt 4. Esta tela já reserva a apresentação de mapa, localização e distância.",
   "habilitesrandom.sanctuary.location": "LOCALIZAÇÃO",
@@ -121,5 +121,9 @@
   "habilitesrandom.randomizer.received": "PERSONAGEM RECEBIDO",
   "habilitesrandom.randomizer.server_decided": "Decidido pelo servidor",
   "habilitesrandom.randomizer.denied.already_has_character": "Você já possui uma habilidade. Use o Reroll.",
-  "habilitesrandom.randomizer.denied.randomizer_disabled": "Randomizer desativado pelo servidor."
+  "habilitesrandom.randomizer.denied.randomizer_disabled": "Randomizer desativado pelo servidor.",
+  "habilitesrandom.reroll.confirm": "CONFIRMAR",
+  "habilitesrandom.reroll.confirm.body": "Tem certeza? Seu personagem atual será substituído.",
+  "habilitesrandom.reroll.final.available": "Último Reroll disponível",
+  "habilitesrandom.reroll.exhausted": "Você já utilizou todos os seus Rerolls."
 }

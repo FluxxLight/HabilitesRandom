@@ -19,7 +19,7 @@ public record PlayerProfile(
         long createdAtEpochMillis,
         long updatedAtEpochMillis
 ) {
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
     public static final Codec<PlayerProfile> CODEC = PlayerProfileCodecs.CODEC;
 
     public PlayerProfile {
@@ -108,7 +108,11 @@ public record PlayerProfile(
             String sanctuaryDimension,
             int sanctuaryX,
             int sanctuaryY,
-            int sanctuaryZ
+            int sanctuaryZ,
+            boolean freeRerollUsed,
+            boolean sanctuaryRerollAvailable,
+            boolean sanctuaryRerollUsed,
+            boolean sanctuaryMapPurchased
     ) {
         public Progress {
             rerollsRemaining = ProfileValues.nonNegative(rerollsRemaining);
@@ -117,15 +121,23 @@ public record PlayerProfile(
         }
 
         public static Progress empty() {
-            return new Progress(0, false, 0, false, "", 0, 0, 0);
+            return new Progress(0, false, 0, false, "", 0, 0, 0, false, false, false, false);
         }
 
         public RerollState rerollState() {
-            if (rerollUsed && rerollsRemaining <= 0) {
-                return RerollState.SANCTUARY_REQUIRED;
-            }
-            return rerollsRemaining > 0 ? RerollState.AVAILABLE : RerollState.UNINITIALIZED;
+            if (!freeRerollUsed && rerollsRemaining > 0) return RerollState.FREE_AVAILABLE;
+            if (sanctuaryRerollAvailable && !sanctuaryRerollUsed) return RerollState.SANCTUARY_AVAILABLE;
+            if (sanctuaryRerollUsed) return RerollState.EXHAUSTED;
+            if (freeRerollUsed) return RerollState.SANCTUARY_REQUIRED;
+            return RerollState.INITIAL_RANDOM;
         }
+
+        public Progress grantFreeReroll() { return new Progress(1, false, sanctuaryProgress, sanctuaryDiscovered, sanctuaryDimension, sanctuaryX, sanctuaryY, sanctuaryZ, false, false, false, sanctuaryMapPurchased); }
+        public Progress consumeFreeReroll() { return new Progress(0, true, sanctuaryProgress, sanctuaryDiscovered, sanctuaryDimension, sanctuaryX, sanctuaryY, sanctuaryZ, true, false, false, sanctuaryMapPurchased); }
+        public Progress withMap(String dimension, int x, int y, int z) { return new Progress(rerollsRemaining, rerollUsed, 50, true, dimension, x, y, z, freeRerollUsed, sanctuaryRerollAvailable, sanctuaryRerollUsed, true); }
+        public Progress grantSanctuaryReroll() { return new Progress(1, true, 100, true, sanctuaryDimension, sanctuaryX, sanctuaryY, sanctuaryZ, true, true, false, sanctuaryMapPurchased); }
+        public Progress consumeSanctuaryReroll() { return new Progress(0, true, 100, true, sanctuaryDimension, sanctuaryX, sanctuaryY, sanctuaryZ, true, false, true, sanctuaryMapPurchased); }
+    }
     }
 
     public record Loadout(
@@ -194,8 +206,10 @@ public record PlayerProfile(
     }
 
     public enum RerollState {
-        UNINITIALIZED,
-        AVAILABLE,
-        SANCTUARY_REQUIRED
+        INITIAL_RANDOM,
+        FREE_AVAILABLE,
+        SANCTUARY_REQUIRED,
+        SANCTUARY_AVAILABLE,
+        EXHAUSTED
     }
 }

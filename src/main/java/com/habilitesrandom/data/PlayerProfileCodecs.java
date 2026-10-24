@@ -23,7 +23,11 @@ public final class PlayerProfileCodecs {
             Codec.STRING.optionalFieldOf("sanctuary_dimension", "").forGetter(PlayerProfile.Progress::sanctuaryDimension),
             Codec.INT.optionalFieldOf("sanctuary_x", 0).forGetter(PlayerProfile.Progress::sanctuaryX),
             Codec.INT.optionalFieldOf("sanctuary_y", 0).forGetter(PlayerProfile.Progress::sanctuaryY),
-            Codec.INT.optionalFieldOf("sanctuary_z", 0).forGetter(PlayerProfile.Progress::sanctuaryZ)
+            Codec.INT.optionalFieldOf("sanctuary_z", 0).forGetter(PlayerProfile.Progress::sanctuaryZ),
+            Codec.BOOL.optionalFieldOf("free_reroll_used", false).forGetter(PlayerProfile.Progress::freeRerollUsed),
+            Codec.BOOL.optionalFieldOf("sanctuary_reroll_available", false).forGetter(PlayerProfile.Progress::sanctuaryRerollAvailable),
+            Codec.BOOL.optionalFieldOf("sanctuary_reroll_used", false).forGetter(PlayerProfile.Progress::sanctuaryRerollUsed),
+            Codec.BOOL.optionalFieldOf("sanctuary_map_purchased", false).forGetter(PlayerProfile.Progress::sanctuaryMapPurchased)
     ).apply(instance, PlayerProfile.Progress::new));
 
     private static final Codec<PlayerProfile.Loadout> LOADOUT = RecordCodecBuilder.create(instance -> instance.group(
