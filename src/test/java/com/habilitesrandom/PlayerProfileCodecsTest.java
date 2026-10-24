@@ -18,7 +18,7 @@ class PlayerProfileCodecsTest {
         assertEquals(PlayerProfile.SCHEMA_VERSION, decoded.schema());
         assertEquals(1234L, decoded.createdAtEpochMillis());
         assertFalse(decoded.hasCharacter());
-        assertEquals(PlayerProfile.RerollState.UNINITIALIZED, decoded.progress().rerollState());
+        assertEquals(PlayerProfile.RerollState.INITIAL_RANDOM, decoded.progress().rerollState());
         assertTrue(decoded.loadout().abilityIds().isEmpty());
     }
 
@@ -42,7 +42,7 @@ class PlayerProfileCodecsTest {
         assertEquals(2, decoded.loadout().abilityIds().size());
         assertEquals(1, decoded.progress().rerollsRemaining());
         assertTrue(decoded.progress().sanctuaryDiscovered());
-        assertEquals(PlayerProfile.RerollState.AVAILABLE, decoded.progress().rerollState());
+        assertEquals(PlayerProfile.RerollState.FREE_AVAILABLE, decoded.progress().rerollState());
         assertEquals(1, decoded.cooldowns().remainingSeconds(1000)[1]);
     }
 
