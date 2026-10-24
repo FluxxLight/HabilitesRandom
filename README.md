@@ -47,3 +47,19 @@ The Core never depends on a Plus. Plus mods can register characters, abilities, 
 ## Current stage
 
 The catalog, full abilities, randomization, shrines, Vampire Explorer and transformation logic intentionally remain unimplemented. Their extension points and authoritative data paths already exist so later prompts can add them without rebuilding the project.
+
+## Character and ability architecture (Prompt 2)
+
+The Core now registers a 91-character launch catalog spanning the ten requested universes. Strength (`STRONG`/`WEAK`), rarity, and independent positive draw weight are separate fields. Every character graph is startup-validated and contains exactly four registered abilities and one registered powerful form.
+
+Public extension points remain under `com.habilitesrandom.api`. A companion mod implements `HabilitesRandomAddon` and receives a `HabilitesRandomRegistrar`; it should register anime/rarity and ability/transformation definitions before its character definitions. Definitions are immutable and duplicate IDs are rejected. `CharacterRegistry`, `AbilityRegistry`, and `TransformationRegistry` provide typed lookup/query APIs. The Core never depends on a Plus mod.
+
+Abilities describe composable behavior types, geometry, damage, range, duration, status effects, safe sound/particle identifiers, knockback, projectile limits, and bounded block interaction. `CombatPolicy` applies server safety caps; block destruction is disabled in its safe default. `CooldownManager` writes independent epoch deadlines into persistent server profiles. The complete key-driven executor and Randomizer selection remain intentionally scheduled for Prompt 3.
+
+To add a character:
+1. Register four unique `AbilityDefinition` values with positive cooldowns.
+2. Register one `TransformationDefinition`.
+3. Register a `CharacterDefinition` referencing those IDs, a registered anime and rarity, a category, and a positive independent weight.
+4. Keep all execution requests server-authoritative; never mutate gameplay from client code.
+
+Run `./gradlew build` for unit/integrity tests. Run `./gradlew runClientGameTest` in a graphical/Xvfb environment for the real-client navigation smoke test.
