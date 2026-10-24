@@ -138,7 +138,6 @@ public record PlayerProfile(
         public Progress grantSanctuaryReroll() { return new Progress(1, true, 100, true, sanctuaryDimension, sanctuaryX, sanctuaryY, sanctuaryZ, true, true, false, sanctuaryMapPurchased); }
         public Progress consumeSanctuaryReroll() { return new Progress(0, true, 100, true, sanctuaryDimension, sanctuaryX, sanctuaryY, sanctuaryZ, true, false, true, sanctuaryMapPurchased); }
     }
-    }
 
     public record Loadout(
             List<String> abilityIds,
