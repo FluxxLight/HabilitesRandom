@@ -24,7 +24,7 @@ Minecraft 26.x is unobfuscated, so this project uses the non-remapping `net.fabr
 ./gradlew test
 ```
 
-The built mod is written to `build/libs/`. GitHub Actions also publishes the jar as a workflow artifact.
+The built mod is written to `build/libs/`. On a successful branch build, GitHub Actions also copies the verified remapped jar and its SHA-256 checksum into `dev-builds/`, making the development build reproducible from the repository itself.
 
 ## Architecture
 
