@@ -73,9 +73,13 @@ public final class RerollScreen extends AbstractHubScreen {
                 cardState == current ? 0.92F : 0.45F);
         graphics.enableScissor(rect.x() + 2, rect.y() + 2, rect.right() - 2, rect.bottom() - 2);
         UiText.label(graphics, font, number, rect.x() + 8, rect.y() + 7, rect.width() - 16, color);
-        UiText.wrapped(graphics, font, Component.translatable(cardState.titleKey),
+        boolean compact = rect.height() < 110;
+        Component label = compact && cardState == State.SANCTUARY
+                ? Component.translatable("habilitesrandom.reroll.sanctuary.short")
+                : Component.translatable(cardState.titleKey);
+        UiText.wrapped(graphics, font, label,
                 rect.x() + 8, rect.y() + 24, rect.width() - 16,
-                cardState == current ? UiTheme.TEXT : UiTheme.TEXT_DIM, 3);
+                cardState == current ? UiTheme.TEXT : UiTheme.TEXT_DIM, compact ? 2 : 3);
         graphics.disableScissor();
         if (cardState == current) {
             graphics.fill(rect.x() + 1, rect.bottom() - 3, rect.right() - 1, rect.bottom() - 1,

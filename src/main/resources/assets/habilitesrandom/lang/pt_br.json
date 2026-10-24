@@ -113,5 +113,6 @@
   "habilitesrandom.reroll.description.short": "Regras autoritativas de reroll chegam no Prompt 4.",
   "habilitesrandom.sanctuary.description.short": "Rastreamento do Santuário chega no Prompt 4.",
   "habilitesrandom.settings.controls.description.short": "Clique em uma tecla e pressione o novo comando.",
-  "habilitesrandom.settings.general.tooltips.body.short": "Ajuda extra preparada para telas futuras."
+  "habilitesrandom.settings.general.tooltips.body.short": "Ajuda extra preparada para telas futuras.",
+  "habilitesrandom.reroll.sanctuary.short": "Encontre um Santuário."
 }

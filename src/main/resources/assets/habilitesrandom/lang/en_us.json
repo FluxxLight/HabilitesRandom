@@ -113,5 +113,6 @@
   "habilitesrandom.reroll.description.short": "Authoritative reroll rules arrive in Prompt 4.",
   "habilitesrandom.sanctuary.description.short": "Sanctuary tracking arrives in Prompt 4.",
   "habilitesrandom.settings.controls.description.short": "Click a key and press a new input.",
-  "habilitesrandom.settings.general.tooltips.body.short": "Extra help is prepared for future screens."
+  "habilitesrandom.settings.general.tooltips.body.short": "Extra help is prepared for future screens.",
+  "habilitesrandom.reroll.sanctuary.short": "Find a Sanctuary."
 }
