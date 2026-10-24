@@ -76,9 +76,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p qa/failure
-          cp client-gametest.log qa/failure/client-gametest.log 2>/dev/null || true
+          # .gitignore excludes *.log, so archive as text for repository inspection.
+          cp client-gametest.log qa/failure/client-gametest.txt 2>/dev/null || true
           if [ -f build/run/clientGameTest/logs/latest.log ]; then
-            cp build/run/clientGameTest/logs/latest.log qa/failure/latest.log
+            cp build/run/clientGameTest/logs/latest.log qa/failure/latest.txt
           fi
           {
             echo '## Client smoke-test failure'
