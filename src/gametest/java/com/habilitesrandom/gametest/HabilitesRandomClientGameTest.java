@@ -47,6 +47,17 @@ public final class HabilitesRandomClientGameTest implements FabricClientGameTest
         context.getInput().pressKey(InputConstants.KEY_H);
         context.waitForScreen(HubScreen.class);
         context.takeScreenshot(shot("02-hub-key-open", shots));
+        context.runOnClient(mc -> {
+            mc.options.guiScale().set(1);
+            mc.getWindow().setWindowed(1280, 720);
+        });
+        context.waitTicks(10);
+        context.takeScreenshot(shot("02b-hub-1280x720", shots));
+        context.runOnClient(mc -> {
+            mc.options.guiScale().set(0);
+            mc.getWindow().setWindowed(854, 480);
+        });
+        context.waitTicks(10);
         closeScreen(context);
 
         showScreen(context, shots, "03-randomizer", RandomizerScreen.class, () -> new RandomizerScreen(null));

@@ -232,7 +232,7 @@ public final class SettingsScreen extends AbstractHubScreen {
         graphics.enableScissor(body.x() + pad, body.y() + 4, body.right() - pad,
                 Math.min(body.bottom(), body.y() + descriptionHeight - 6));
         UiText.wrapped(graphics, font, description, body.x() + pad, body.y() + 7,
-                body.width() - 2 * pad, UiTheme.TEXT_SOFT, 2);
+                body.width() - 2 * pad, UiTheme.TEXT_SOFT, descriptionHeight >= 40 ? 2 : 1);
         graphics.disableScissor();
         UiTheme.divider(graphics, body.x() + pad, body.y() + descriptionHeight - 5,
                 body.width() - 2 * pad, 0.7F);

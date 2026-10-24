@@ -81,10 +81,12 @@ public final class HubScreen extends AbstractHubScreen {
         }
         drawHero(graphics);
         UiTheme.card(graphics, menu.x(), menu.y(), menu.width(), menu.height(), UiTheme.PURPLE, 0.38F);
-        UiText.label(graphics, font, ClientNetworking.serverHasMod()
-                        ? Component.translatable("habilitesrandom.hub.server").getString()
-                        : Component.translatable("habilitesrandom.hub.client").getString(),
-                menu.x() + 10, menu.y() + 6, menu.width() - 20, UiTheme.TEXT_DIM);
+        if (menu.height() >= 84) {
+            UiText.label(graphics, font, ClientNetworking.serverHasMod()
+                            ? Component.translatable("habilitesrandom.hub.server").getString()
+                            : Component.translatable("habilitesrandom.hub.client").getString(),
+                    menu.x() + 10, menu.y() + 6, menu.width() - 20, UiTheme.TEXT_DIM);
+        }
     }
 
     private void drawHero(GuiGraphicsExtractor graphics) {
