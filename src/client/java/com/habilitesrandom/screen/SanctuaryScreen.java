@@ -1,6 +1,7 @@
 package com.habilitesrandom.screen;
 
 import com.habilitesrandom.client.net.ClientProfileCache;
+import com.habilitesrandom.client.net.ClientNetworking;
 import com.habilitesrandom.client.ui.HubButton;
 import com.habilitesrandom.client.ui.UiAnimation;
 import com.habilitesrandom.client.ui.UiLayout;
@@ -47,11 +48,12 @@ public final class SanctuaryScreen extends AbstractHubScreen {
 
         UiLayout.Rect footer = layout().footer();
         List<UiLayout.Rect> actions = UiLayout.splitColumns(footer, 2, 8);
-        addRenderableWidget(new HubButton(actions.get(0).x(), actions.get(0).y(),
-                actions.get(0).width(), actions.get(0).height(),
-                Component.translatable("habilitesrandom.sanctuary.track"), Component.empty(), UiTheme.GREEN,
-                false, button -> {
-                }, Component.translatable("habilitesrandom.common.available_prompt", 4)));
+        boolean mapOwned=ClientProfileCache.sanctuaryProgress() >= 50;
+        HubButton sanctuaryAction=new HubButton(actions.get(0).x(), actions.get(0).y(), actions.get(0).width(), actions.get(0).height(),
+                Component.translatable(mapOwned ? "habilitesrandom.sanctuary.claim" : "habilitesrandom.sanctuary.buy_map"), Component.empty(), UiTheme.GREEN,
+                false, button -> { if(mapOwned) ClientNetworking.claimSanctuaryReroll(); else ClientNetworking.requestSanctuaryMap(); }, null);
+        sanctuaryAction.active=ClientProfileCache.rerollState().equals("SANCTUARY_REQUIRED");
+        addRenderableWidget(sanctuaryAction);
         addRenderableWidget(HubButton.compact(actions.get(1).x(), actions.get(1).y(),
                 actions.get(1).width(), actions.get(1).height(),
                 Component.translatable("habilitesrandom.common.back"), UiTheme.CYAN, true, this::onClose, null));

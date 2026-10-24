@@ -69,3 +69,9 @@ Run `./gradlew build` for unit/integrity tests. Run `./gradlew runClientGameTest
 Global Fabric mappings are Z/X/C/V for ability slots 1–4 and left Alt for the powerful form. They are visible and remappable in Minecraft controls; the HUB controls page edits those same mappings. The client sends only an action and slot. `PlayerAuthorityGate` resolves the persisted character and registered loadout, checks life/cooldown/configuration, and the server executes bounded combat and starts the persisted cooldown.
 
 The first draw is explicitly requested from the Randomizer screen. `RandomizerService` reads every enabled `CharacterRegistry` entry—including entries supplied by Plus addons—normalizes independent weights, applies a bounded category-only anti-luck multiplier, assigns the complete loadout, saves it, and only then sends the reveal payload. A second normal draw is rejected. Configure gameplay in `config/habilitesrandom/server.json`; options include enablement, allow/block filters, weight overrides, anti-luck, announcements, ability execution and safety caps. Server configuration is authoritative.
+
+## Reroll and Sanctuary state (Prompt 4)
+
+The first server-approved draw grants exactly one persisted free reroll. `RerollService` reuses `RandomizerService`, therefore weights, anti-luck, filters, registries and Plus content remain identical. A completed replacement resets the old character cooldowns through `CharacterAssignmentService`. The persistent progression is one-way: free reroll, sanctuary required, final reroll available, exhausted.
+
+The sanctuary transaction policy defaults to 15 emeralds and 50% of current health while preserving at least one health point. Eligibility, inventory and health are validated before commit. Sanctuary map coordinates and the individual altar reward are stored in the existing `PlayerProfile`; the shared location never acts as a global reward lock. Server options live in `config/habilitesrandom/server.json`.

@@ -125,5 +125,8 @@
   "habilitesrandom.reroll.confirm": "CONFIRMAR",
   "habilitesrandom.reroll.confirm.body": "Tem certeza? Seu personagem atual será substituído.",
   "habilitesrandom.reroll.final.available": "Último Reroll disponível",
-  "habilitesrandom.reroll.exhausted": "Você já utilizou todos os seus Rerolls."
+  "habilitesrandom.reroll.exhausted": "Você já utilizou todos os seus Rerolls.",
+  "habilitesrandom.sanctuary.buy_map": "OBTER MAPA — 15 ESMERALDAS + 50% VIDA",
+  "habilitesrandom.sanctuary.claim": "RECEBER ÚLTIMO REROLL",
+  "habilitesrandom.sanctuary.explorer": "EXPLORADOR VAMPIRO"
 }

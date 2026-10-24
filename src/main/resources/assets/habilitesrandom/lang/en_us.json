@@ -125,5 +125,8 @@
   "habilitesrandom.reroll.confirm": "CONFIRM",
   "habilitesrandom.reroll.confirm.body": "Are you sure? Your current character will be replaced.",
   "habilitesrandom.reroll.final.available": "Final Reroll available",
-  "habilitesrandom.reroll.exhausted": "You have used all your Rerolls."
+  "habilitesrandom.reroll.exhausted": "You have used all your Rerolls.",
+  "habilitesrandom.sanctuary.buy_map": "GET MAP — 15 EMERALDS + 50% HEALTH",
+  "habilitesrandom.sanctuary.claim": "CLAIM FINAL REROLL",
+  "habilitesrandom.sanctuary.explorer": "VAMPIRE EXPLORER"
 }
