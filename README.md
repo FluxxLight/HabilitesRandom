@@ -75,3 +75,9 @@ The first draw is explicitly requested from the Randomizer screen. `RandomizerSe
 The first server-approved draw grants exactly one persisted free reroll. `RerollService` reuses `RandomizerService`, therefore weights, anti-luck, filters, registries and Plus content remain identical. A completed replacement resets the old character cooldowns through `CharacterAssignmentService`. The persistent progression is one-way: free reroll, sanctuary required, final reroll available, exhausted.
 
 The sanctuary transaction policy defaults to 15 emeralds and 50% of current health while preserving at least one health point. Eligibility, inventory and health are validated before commit. Sanctuary map coordinates and the individual altar reward are stored in the existing `PlayerProfile`; the shared location never acts as a global reward lock. Server options live in `config/habilitesrandom/server.json`.
+
+## Powerful forms and Powerful Fruit (Prompt 5)
+
+The global Alt mapping requests the registered transformation from the server. Daily availability is calculated lazily from the Overworld day (`dayTime / 24000`), so natural dawn, sleeping and time commands all reset charges without a per-player every-tick scan. Profiles persist the last use day, uses on that day and active expiry. Active forms apply the registered damage multiplier to the existing ability executor; expiration and death are reconciled once per second, while reroll clears the prior active form without refunding its daily charge.
+
+`habilitesrandom:powerful_fruit` is a registered item with an original texture, model, translations and data-pack recipe. One consumption permanently changes the profile from one to two daily form charges; repeat consumption is rejected and cannot stack. It remains obtainable with `/give` when recipes are disabled by a server pack.
