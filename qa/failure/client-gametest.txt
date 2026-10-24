@@ -19,6 +19,7 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.18.4
 
 > Task :compileJava
+<<<<<<< Updated upstream
 /home/runner/work/HabilitesRandom/HabilitesRandom/src/main/java/com/habilitesrandom/player/ServerActionGateway.java:9: error: method clearOrCountMatchingItems in class Inventory cannot be applied to given types;
  private static void buyMap(MinecraftServer server,ServerPlayer player,PlayerProfile profile){var cfg=ServerConfigStore.get();int emeralds=player.getInventory().countItem(net.minecraft.world.item.Items.EMERALD);var quote=com.habilitesrandom.sanctuary.SanctuaryEconomy.quote(emeralds,player.getHealth(),cfg.sanctuaryEmeraldCost,cfg.sanctuaryHealthFraction,1);if(!quote.affordable()){player.sendSystemMessage(Component.literal(quote.denial().equals("missing_emeralds")?"Você precisa de "+cfg.sanctuaryEmeraldCost+" esmeraldas.":"Vida insuficiente."));return;}int removed=player.getInventory().clearOrCountMatchingItems(stack->stack.is(net.minecraft.world.item.Items.EMERALD),quote.emeraldCost(),player.inventoryMenu.getCraftSlots());if(removed<quote.emeraldCost())return;player.setHealth(quote.remainingHealth());int distance=(cfg.sanctuaryMinDistance+cfg.sanctuaryMaxDistance)/2;int x=player.getBlockX()+distance,z=player.getBlockZ()+distance/2;PlayerProfile updated=com.habilitesrandom.sanctuary.SanctuaryService.purchaseMap(profile,"minecraft:overworld",x,player.getBlockY(),z);PlayerDataManager.update(server,player.getUUID(),updated);PlayerDataManager.flush(server);NetworkSync.sendProfile(player);player.sendSystemMessage(Component.literal("Mapa do Santuário: X "+x+" Z "+z).withColor(0x9D6BFF));}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
@@ -33,14 +34,27 @@ Note: Some messages have been simplified; recompile with -Xdiags:verbose to get 
 
 > Task :compileJava FAILED
 gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1792845200699.json
+=======
+> Task :processResources
+> Task :classes
+
+> Task :compileClientJava FAILED
+/home/runner/work/HabilitesRandom/HabilitesRandom/src/client/java/com/habilitesrandom/screen/RerollScreen.java:44: error: rebuildWidgets() in RerollScreen cannot override rebuildWidgets() in Screen
+    private void rebuildWidgets(){ clearWidgets(); buildContent(); }
+                 ^
+  attempting to assign weaker access privileges; was protected
+1 error
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1792845262126.json
+>>>>>>> Stashed changes
 
 [Incubating] Problems report is available at: file:///home/runner/work/HabilitesRandom/HabilitesRandom/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
+Execution failed for task ':compileClientJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
+<<<<<<< Updated upstream
   /home/runner/work/HabilitesRandom/HabilitesRandom/src/main/java/com/habilitesrandom/player/ServerActionGateway.java:9: error: method clearOrCountMatchingItems in class Inventory cannot be applied to given types;
    private static void buyMap(MinecraftServer server,ServerPlayer player,PlayerProfile profile){var cfg=ServerConfigStore.get();int emeralds=player.getInventory().countItem(net.minecraft.world.item.Items.EMERALD);var quote=com.habilitesrandom.sanctuary.SanctuaryEconomy.quote(emeralds,player.getHealth(),cfg.sanctuaryEmeraldCost,cfg.sanctuaryHealthFraction,1);if(!quote.affordable()){player.sendSystemMessage(Component.literal(quote.denial().equals("missing_emeralds")?"Você precisa de "+cfg.sanctuaryEmeraldCost+" esmeraldas.":"Vida insuficiente."));return;}int removed=player.getInventory().clearOrCountMatchingItems(stack->stack.is(net.minecraft.world.item.Items.EMERALD),quote.emeraldCost(),player.inventoryMenu.getCraftSlots());if(removed<quote.emeraldCost())return;player.setHealth(quote.remainingHealth());int distance=(cfg.sanctuaryMinDistance+cfg.sanctuaryMaxDistance)/2;int x=player.getBlockX()+distance,z=player.getBlockZ()+distance/2;PlayerProfile updated=com.habilitesrandom.sanctuary.SanctuaryService.purchaseMap(profile,"minecraft:overworld",x,player.getBlockY(),z);PlayerDataManager.update(server,player.getUUID(),updated);PlayerDataManager.flush(server);NetworkSync.sendProfile(player);player.sendSystemMessage(Component.literal("Mapa do Santuário: X "+x+" Z "+z).withColor(0x9D6BFF));}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ^
@@ -52,13 +66,20 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ^
   Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
   2 errors
+=======
+  /home/runner/work/HabilitesRandom/HabilitesRandom/src/client/java/com/habilitesrandom/screen/RerollScreen.java:44: error: rebuildWidgets() in RerollScreen cannot override rebuildWidgets() in Screen
+      private void rebuildWidgets(){ clearWidgets(); buildContent(); }
+                   ^
+    attempting to assign weaker access privileges; was protected
+  1 error
+>>>>>>> Stashed changes
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileClientJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:135)
 	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
@@ -93,6 +114,7 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
+<<<<<<< Updated upstream
 /home/runner/work/HabilitesRandom/HabilitesRandom/src/main/java/com/habilitesrandom/player/ServerActionGateway.java:9: error: method clearOrCountMatchingItems in class Inventory cannot be applied to given types;
  private static void buyMap(MinecraftServer server,ServerPlayer player,PlayerProfile profile){var cfg=ServerConfigStore.get();int emeralds=player.getInventory().countItem(net.minecraft.world.item.Items.EMERALD);var quote=com.habilitesrandom.sanctuary.SanctuaryEconomy.quote(emeralds,player.getHealth(),cfg.sanctuaryEmeraldCost,cfg.sanctuaryHealthFraction,1);if(!quote.affordable()){player.sendSystemMessage(Component.literal(quote.denial().equals("missing_emeralds")?"Você precisa de "+cfg.sanctuaryEmeraldCost+" esmeraldas.":"Vida insuficiente."));return;}int removed=player.getInventory().clearOrCountMatchingItems(stack->stack.is(net.minecraft.world.item.Items.EMERALD),quote.emeraldCost(),player.inventoryMenu.getCraftSlots());if(removed<quote.emeraldCost())return;player.setHealth(quote.remainingHealth());int distance=(cfg.sanctuaryMinDistance+cfg.sanctuaryMaxDistance)/2;int x=player.getBlockX()+distance,z=player.getBlockZ()+distance/2;PlayerProfile updated=com.habilitesrandom.sanctuary.SanctuaryService.purchaseMap(profile,"minecraft:overworld",x,player.getBlockY(),z);PlayerDataManager.update(server,player.getUUID(),updated);PlayerDataManager.flush(server);NetworkSync.sendProfile(player);player.sendSystemMessage(Component.literal("Mapa do Santuário: X "+x+" Z "+z).withColor(0x9D6BFF));}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
@@ -104,6 +126,13 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^
 Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
 2 errors
+=======
+/home/runner/work/HabilitesRandom/HabilitesRandom/src/client/java/com/habilitesrandom/screen/RerollScreen.java:44: error: rebuildWidgets() in RerollScreen cannot override rebuildWidgets() in Screen
+    private void rebuildWidgets(){ clearWidgets(); buildContent(); }
+                 ^
+  attempting to assign weaker access privileges; was protected
+1 error
+>>>>>>> Stashed changes
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:88)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:49)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -238,5 +267,16 @@ Note: Some messages have been simplified; recompile with -Xdiags:verbose to get 
 	... 30 more
 
 
+<<<<<<< Updated upstream
 BUILD FAILED in 36s
 1 actionable task: 1 executed
+=======
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 47s
+3 actionable tasks: 3 executed
+>>>>>>> Stashed changes
