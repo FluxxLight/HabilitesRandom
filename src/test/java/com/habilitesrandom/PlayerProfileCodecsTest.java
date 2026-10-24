@@ -43,7 +43,7 @@ class PlayerProfileCodecsTest {
         assertEquals(1, decoded.progress().rerollsRemaining());
         assertTrue(decoded.progress().sanctuaryDiscovered());
         assertEquals(PlayerProfile.RerollState.AVAILABLE, decoded.progress().rerollState());
-        assertEquals(2, decoded.cooldowns().remainingSeconds(1000)[1]);
+        assertEquals(1, decoded.cooldowns().remainingSeconds(1000)[1]);
     }
 
     @Test

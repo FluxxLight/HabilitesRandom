@@ -18,7 +18,7 @@ concurrency:
 jobs:
   build:
     name: Compile and test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
@@ -33,9 +33,27 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build mod and run tests
+        shell: bash
         run: |
           chmod +x gradlew
-          ./gradlew build --no-daemon --console=plain --stacktrace
+          set -o pipefail
+          ./gradlew build --no-daemon --console=plain --stacktrace 2>&1 | tee gradle-build.log
+
+      - name: Publish failure details
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo '## HabilitesRandom build failure'
+            echo '### JUnit failures'
+            if compgen -G "build/test-results/test/*.xml" > /dev/null; then
+              grep -hE '<testsuite|<failure|<error' build/test-results/test/*.xml || true
+            else
+              echo 'No JUnit XML was produced.'
+            fi
+            echo '### Gradle log tail'
+            if [ -f gradle-build.log ]; then tail -n 180 gradle-build.log; fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload development jars
         if: success()
