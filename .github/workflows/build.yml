@@ -38,7 +38,7 @@ jobs:
         run: |
           chmod +x gradlew
           set -o pipefail
-          ./gradlew build --no-daemon --console=plain --stacktrace 2>&1 | tee gradle-build.log
+          ./gradlew clean build :example-plus:build --no-daemon --console=plain --stacktrace 2>&1 | tee gradle-build.log
 
       - name: Publish failure details
         if: failure()
@@ -61,7 +61,9 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: habilitesrandom-dev
-          path: build/libs/*.jar
+          path: |
+            build/libs/*.jar
+            examples/HabilitesRandom-Test-Plus/build/libs/*.jar
           if-no-files-found: error
 
       - name: Publish development build to this branch
@@ -69,15 +71,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          JAR="$(find build/libs -maxdepth 1 -type f -name 'HabilitesRandom-*.jar' ! -name '*sources*' | head -n 1)"
-          if [ -z "$JAR" ]; then echo 'No remapped development jar found'; exit 1; fi
-          mkdir -p dev-builds
-          cp "$JAR" dev-builds/HabilitesRandom-0.1.0+26.3-dev.jar
-          (cd dev-builds && sha256sum HabilitesRandom-0.1.0+26.3-dev.jar > HabilitesRandom-0.1.0+26.3-dev.jar.sha256)
+          CORE_JAR="$(find build/libs -maxdepth 1 -type f -name 'HabilitesRandom-*.jar' ! -name '*sources*' | head -n 1)"
+          PLUS_JAR="$(find examples/HabilitesRandom-Test-Plus/build/libs -maxdepth 1 -type f -name 'HabilitesRandom-Test-Plus-*.jar' ! -name '*sources*' | head -n 1)"
+          if [ -z "$CORE_JAR" ] || [ -z "$PLUS_JAR" ]; then echo 'Core or independent Plus jar missing'; exit 1; fi
+          mkdir -p dev-builds release
+          rm -f dev-builds/*.jar dev-builds/*.sha256 release/*.jar release/*.sha256
+          cp "$CORE_JAR" dev-builds/HabilitesRandom-1.0.0+26.3-dev.jar
+          cp "$PLUS_JAR" dev-builds/HabilitesRandom-Test-Plus-1.0.0+26.3-dev.jar
+          cp "$CORE_JAR" release/HabilitesRandom-1.0.0+26.3.jar
+          cp "$PLUS_JAR" release/HabilitesRandom-Test-Plus-1.0.0+26.3.jar
+          (cd dev-builds && sha256sum *.jar > SHA256SUMS)
+          (cd release && sha256sum *.jar > SHA256SUMS)
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git pull --rebase --autostash origin "${{ github.ref_name }}"
-          git add dev-builds
+          git add dev-builds release
           if git diff --cached --quiet; then
             echo 'Development build already current'
           else

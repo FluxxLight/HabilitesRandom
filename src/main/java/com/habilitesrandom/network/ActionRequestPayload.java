@@ -7,7 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
-/** Forward-compatible action request. Prompt 3+ will attach server handlers to validated actions. */
+/** Minimal client intent payload; server handlers validate every action. */
 public record ActionRequestPayload(String action, int slot) implements CustomPacketPayload {
     private static final int ACTION_LIMIT = 32;
 

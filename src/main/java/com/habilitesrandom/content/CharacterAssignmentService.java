@@ -1,6 +1,6 @@
 package com.habilitesrandom.content;
 import com.habilitesrandom.api.*; import com.habilitesrandom.core.CoreServices; import com.habilitesrandom.data.PlayerProfile; import net.minecraft.resources.Identifier;
-/** Creates a complete server-owned loadout from one catalog character. Random selection remains Prompt 3. */
+/** Creates a complete server-owned loadout from one catalog character. */
 public final class CharacterAssignmentService {
  private CharacterAssignmentService(){}
  public static PlayerProfile assign(PlayerProfile profile, Identifier id){

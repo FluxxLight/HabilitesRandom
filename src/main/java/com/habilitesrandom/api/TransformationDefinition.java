@@ -3,7 +3,7 @@ package com.habilitesrandom.api;
 import net.minecraft.resources.Identifier;
 import java.util.List;
 
-/** One timed powerful form. Daily-use policy is intentionally deferred to Prompt 5. */
+/** One timed powerful form consumed through Core-owned daily-use policy. */
 public record TransformationDefinition(Identifier id, String displayName, String description, int durationTicks,
         int cooldownTicks, double damageMultiplier, double speedMultiplier, double defenseMultiplier,
         List<EffectSpec> effects, String particleId, String soundId) implements CatalogEntry {

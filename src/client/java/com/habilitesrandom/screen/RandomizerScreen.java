@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-/** Cinematic result stage prepared for Prompt 3; no draw is performed or faked here. */
+/** Cinematic presentation of the server-authoritative randomizer result. */
 public final class RandomizerScreen extends AbstractHubScreen {
     private UiLayout.Rect portrait;
     private UiLayout.Rect details;

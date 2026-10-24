@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-/** Visual state machine scaffold for the server-authoritative reroll system in Prompt 4. */
+/** Visual state machine for the server-authoritative reroll system. */
 public final class RerollScreen extends AbstractHubScreen {
     private boolean confirming; private HubButton actionButton; private RandomizerResultPayload result;
     public RerollScreen(Screen parent) {

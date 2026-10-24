@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-/** Map and tracking presentation scaffold; no world structure is generated in Prompt 1. */
+/** Map and tracking presentation for the persistent Sanctuary location. */
 public final class SanctuaryScreen extends AbstractHubScreen {
     private UiLayout.Rect map;
     private UiLayout.Rect info;
