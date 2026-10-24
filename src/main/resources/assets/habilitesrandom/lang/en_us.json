@@ -106,5 +106,12 @@
   "habilitesrandom.hud.title": "HABILITESRANDOM",
   "habilitesrandom.hud.waiting_server": "Waiting for server",
   "habilitesrandom.hud.no_rarity": "No rarity",
-  "habilitesrandom.hud.form_empty": "FORM —"
+  "habilitesrandom.hud.form_empty": "FORM —",
+  "habilitesrandom.key.form.short": "Form",
+  "habilitesrandom.settings.controls.vanilla.short": "Vanilla controls",
+  "habilitesrandom.randomizer.description.short": "Full draw arrives in Prompt 3.",
+  "habilitesrandom.reroll.description.short": "Authoritative reroll rules arrive in Prompt 4.",
+  "habilitesrandom.sanctuary.description.short": "Sanctuary tracking arrives in Prompt 4.",
+  "habilitesrandom.settings.controls.description.short": "Click a key and press a new input.",
+  "habilitesrandom.settings.general.tooltips.body.short": "Extra help is prepared for future screens."
 }

@@ -106,5 +106,12 @@
   "habilitesrandom.hud.title": "HABILITESRANDOM",
   "habilitesrandom.hud.waiting_server": "Aguardando servidor",
   "habilitesrandom.hud.no_rarity": "Sem raridade",
-  "habilitesrandom.hud.form_empty": "FORMA —"
+  "habilitesrandom.hud.form_empty": "FORMA —",
+  "habilitesrandom.key.form.short": "Forma",
+  "habilitesrandom.settings.controls.vanilla.short": "Controles vanilla",
+  "habilitesrandom.randomizer.description.short": "Sorteio completo chega no Prompt 3.",
+  "habilitesrandom.reroll.description.short": "Regras autoritativas de reroll chegam no Prompt 4.",
+  "habilitesrandom.sanctuary.description.short": "Rastreamento do Santuário chega no Prompt 4.",
+  "habilitesrandom.settings.controls.description.short": "Clique em uma tecla e pressione o novo comando.",
+  "habilitesrandom.settings.general.tooltips.body.short": "Ajuda extra preparada para telas futuras."
 }

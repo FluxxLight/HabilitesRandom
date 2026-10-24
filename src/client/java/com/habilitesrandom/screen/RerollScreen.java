@@ -50,7 +50,10 @@ public final class RerollScreen extends AbstractHubScreen {
         UiText.centered(graphics, font, Component.translatable(state.titleKey).getString(),
                 headline.x() + headline.width() / 2, headline.y() + 18, headline.width() - 24,
                 state.color);
-        UiText.wrapped(graphics, font, Component.translatable("habilitesrandom.reroll.description"),
+        UiText.wrapped(graphics, font,
+                Component.translatable(headline.height() < 70
+                        ? "habilitesrandom.reroll.description.short"
+                        : "habilitesrandom.reroll.description"),
                 headline.x() + 16, headline.y() + 32, headline.width() - 32,
                 UiTheme.TEXT_SOFT, 2);
         graphics.disableScissor();

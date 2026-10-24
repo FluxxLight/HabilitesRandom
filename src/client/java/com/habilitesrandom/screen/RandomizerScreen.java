@@ -99,8 +99,12 @@ public final class RandomizerScreen extends AbstractHubScreen {
         int x = details.x() + 12;
         int width = details.width() - 24;
         int y = details.y() + 10;
-        Component description = Component.translatable("habilitesrandom.randomizer.description");
-        int descriptionLimit = Math.max(1, Math.min(4, (details.height() - 50) / (font.lineHeight + 2)));
+        boolean compact = details.height() < 120;
+        Component description = Component.translatable(compact
+                ? "habilitesrandom.randomizer.description.short"
+                : "habilitesrandom.randomizer.description");
+        int descriptionLimit = compact ? 2
+                : Math.max(1, Math.min(4, (details.height() - 50) / (font.lineHeight + 2)));
 
         graphics.enableScissor(details.x() + 2, details.y() + 2, details.right() - 2, details.bottom() - 2);
         int descriptionHeight = UiText.wrapped(graphics, font, description, x, y, width,

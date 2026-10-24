@@ -102,8 +102,12 @@ public final class SanctuaryScreen extends AbstractHubScreen {
         int x = info.x() + 10;
         int width = info.width() - 20;
         int y = info.y() + 8;
-        Component description = Component.translatable("habilitesrandom.sanctuary.description");
-        int descriptionLines = Math.max(1, Math.min(3, (info.height() - 45) / (font.lineHeight + 2)));
+        boolean compact = info.height() < 100;
+        Component description = Component.translatable(compact
+                ? "habilitesrandom.sanctuary.description.short"
+                : "habilitesrandom.sanctuary.description");
+        int descriptionLines = compact ? 1
+                : Math.max(1, Math.min(3, (info.height() - 45) / (font.lineHeight + 2)));
 
         graphics.enableScissor(info.x() + 2, info.y() + 2, info.right() - 2, info.bottom() - 2);
         int descriptionHeight = UiText.wrapped(graphics, font, description, x, y, width,

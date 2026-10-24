@@ -134,7 +134,7 @@ public final class SettingsScreen extends AbstractHubScreen {
                                 listeningSlot = -1;
                                 rebuildWidgets();
                             });
-                    addActionButton(slots.get(6), Component.translatable("habilitesrandom.settings.controls.vanilla"),
+                    addActionButton(slots.get(6), Component.translatable("habilitesrandom.settings.controls.vanilla.short"),
                             UiTheme.CYAN, () -> navigate(new KeyBindsScreen(this, minecraft.options)));
                 } else {
                     List<UiLayout.Rect> actions = UiLayout.splitColumns(
@@ -208,8 +208,9 @@ public final class SettingsScreen extends AbstractHubScreen {
                 ? Component.translatable("habilitesrandom.settings.controls.listening")
                 : mapping.getTranslatedKeyMessage();
         boolean compact = rect.height() < 34;
+        String nameKey = compact && slot == 4 ? "habilitesrandom.key.form.short" : mapping.getName();
         Component title = compact
-                ? Component.translatable(mapping.getName()).copy().append(Component.literal("   ")).append(value)
+                ? Component.translatable(nameKey).copy().append(Component.literal("   ")).append(value)
                 : Component.translatable(mapping.getName());
         Component subtitle = compact ? Component.empty() : value;
         HubButton button = new HubButton(rect.x(), rect.y(), rect.width(), rect.height(),
@@ -256,9 +257,16 @@ public final class SettingsScreen extends AbstractHubScreen {
                 ? Component.translatable("habilitesrandom.settings.general.tooltips.body")
                 : Component.translatable(category.titleKey);
         int descriptionHeight = UiLayout.clamp(body.height() * 16 / 100, 26, 44);
+        Component shownDescription = descriptionHeight < 40
+                ? switch (category) {
+                    case CONTROLS -> Component.translatable("habilitesrandom.settings.controls.description.short");
+                    case GENERAL -> Component.translatable("habilitesrandom.settings.general.tooltips.body.short");
+                    default -> Component.translatable(category.titleKey);
+                }
+                : description;
         graphics.enableScissor(body.x() + pad, body.y() + 4, body.right() - pad,
                 Math.min(body.bottom(), body.y() + descriptionHeight - 6));
-        UiText.wrapped(graphics, font, description, body.x() + pad, body.y() + 7,
+        UiText.wrapped(graphics, font, shownDescription, body.x() + pad, body.y() + 7,
                 body.width() - 2 * pad, UiTheme.TEXT_SOFT, descriptionHeight >= 40 ? 2 : 1);
         graphics.disableScissor();
         UiTheme.divider(graphics, body.x() + pad, body.y() + descriptionHeight - 5,
