@@ -56,13 +56,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          rm -rf qa/failure
           mkdir -p qa/screenshots
           find build/gametest run/screenshots -type f -name '*.png' -exec cp -t qa/screenshots/ {} + 2>/dev/null || true
-          printf 'Screenshots captured: %s\n' "$(find qa/screenshots -type f -name '*.png' | wc -l)" >> "$GITHUB_STEP_SUMMARY"
+          COUNT="$(find qa/screenshots -type f -name '*.png' | wc -l)"
+          printf 'Screenshots captured: %s\n' "$COUNT" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$COUNT" -lt 7 ]; then
+            echo "Expected at least 7 screenshots, found $COUNT" >&2
+            exit 1
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git pull --rebase --autostash origin "${{ github.ref_name }}"
-          git add qa/screenshots
+          git add -A qa
           if git diff --cached --quiet; then
             echo 'No new screenshots'
           else

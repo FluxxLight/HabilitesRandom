@@ -3,6 +3,7 @@ package com.habilitesrandom.gametest;
 import com.habilitesrandom.client.net.ClientNetworking;
 import com.habilitesrandom.client.net.ClientProfileCache;
 import com.habilitesrandom.screen.AbilityScreen;
+import com.habilitesrandom.screen.AbstractHubScreen;
 import com.habilitesrandom.screen.HubScreen;
 import com.habilitesrandom.screen.RandomizerScreen;
 import com.habilitesrandom.screen.RerollScreen;
@@ -56,7 +57,7 @@ public final class HabilitesRandomClientGameTest implements FabricClientGameTest
 
         world.close();
         context.waitFor(mc -> !ClientProfileCache.isLinked(), 100);
-        check(context.computeOnClient(mc -> mc.gui.screen() == null),
+        check(context.computeOnClient(mc -> !(mc.gui.screen() instanceof AbstractHubScreen)),
                 "leaving the world must not leave a HabilitesRandom screen behind");
     }
 
