@@ -20,7 +20,12 @@ public final class PlayerDataManager {
 
     public static void prime(MinecraftServer server) {
         PlayerProfileState state = state(server);
+        int migrated = state.migrateToCurrentSchema();
         HabilitesRandom.LOGGER.info("Loaded {} HabilitesRandom player profile(s)", state.size());
+        if (migrated > 0) {
+            HabilitesRandom.LOGGER.info("Migrated {} HabilitesRandom player profile(s) to schema {} without resetting profile data",
+                    migrated, PlayerProfile.SCHEMA_VERSION);
+        }
     }
 
     public static PlayerProfile get(MinecraftServer server, UUID playerId) {

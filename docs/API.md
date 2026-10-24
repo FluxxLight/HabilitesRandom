@@ -61,3 +61,7 @@ Abilities without a custom executor use Core's bounded declarative executor. `Ab
 The single catalog drives Randomizer, Reroll, Minha Habilidade, HUD, Z/X/C/V/ALT controls, cooldowns, daily forms, and persistence. There are no per-Plus randomizers or key mappings. Stable IDs must use the addon's namespace.
 
 If a Plus is removed while its character is saved, the raw profile is preserved. The UI safely shows the stable ID/fallback data, and gameplay actions are denied until that content is installed again or an authorized reroll changes the character.
+
+## Persistence compatibility
+
+Profiles carry schema version `2`. At server startup, older additive schemas are upgraded in place and one aggregate migration message is logged; identity, reroll/Sanctuary progression, loadout, cooldowns, form state, and fruit entitlement are retained. Unknown stable IDs are not discarded, which makes temporary Plus removal reversible.

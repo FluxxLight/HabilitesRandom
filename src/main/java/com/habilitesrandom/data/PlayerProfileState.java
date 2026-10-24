@@ -57,6 +57,23 @@ public final class PlayerProfileState extends SavedData {
         return players.size();
     }
 
+    /** Additive migration: advances schema while preserving every identity/progression/loadout field. */
+    public int migrateToCurrentSchema() {
+        int migrated = 0;
+        for (Map.Entry<UUID, PlayerProfile> entry : players.entrySet()) {
+            PlayerProfile old = entry.getValue();
+            if (old.schema() < PlayerProfile.SCHEMA_VERSION) {
+                entry.setValue(new PlayerProfile(PlayerProfile.SCHEMA_VERSION, old.identity(), old.progress(),
+                        old.loadout(), old.cooldowns(), old.createdAtEpochMillis(), old.updatedAtEpochMillis()));
+                migrated++;
+            }
+        }
+        if (migrated > 0) {
+            setDirty();
+        }
+        return migrated;
+    }
+
     public Map<UUID, PlayerProfile> view() {
         return Collections.unmodifiableMap(players);
     }
