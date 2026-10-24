@@ -3,7 +3,7 @@
   "id": "habilitesrandom",
   "version": "${version}",
   "name": "HabilitesRandom",
-  "description": "Foundation, server-authoritative player data and the premium HUB interface for HabilitesRandom.",
+  "description": "Server-authoritative anime ability randomizer with a public Plus API.",
   "authors": [
     "FluxxLight"
   ],
@@ -32,8 +32,8 @@
   },
   "custom": {
     "habilitesrandom": {
-      "core_api": 1,
-      "stage": "prompt-5",
+      "core_api": "1.0",
+      "stage": "release",
       "authority": "server"
     }
   }

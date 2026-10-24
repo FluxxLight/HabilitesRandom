@@ -10,3 +10,6 @@ pluginManagement {
 }
 
 rootProject.name = 'HabilitesRandom'
+
+include 'example-plus'
+project(':example-plus').projectDir = file('examples/HabilitesRandom-Test-Plus')

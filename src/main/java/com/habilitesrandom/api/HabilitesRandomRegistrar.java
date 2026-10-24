@@ -1,5 +1,8 @@
 package com.habilitesrandom.api;
 
+import com.habilitesrandom.api.execution.*;
+import net.minecraft.resources.Identifier;
+
 /**
  * Public registration surface for HabilitesRandom Plus. Calls are validated by the Core and record
  * the addon that owns each entry; duplicate ids are rejected instead of silently overwritten.
@@ -16,6 +19,10 @@ public interface HabilitesRandomRegistrar {
     boolean registerAbility(AbilityDefinition definition);
 
     boolean registerTransformation(TransformationDefinition definition);
+
+    boolean registerAbilityExecutor(Identifier abilityId, AbilityExecutor executor);
+
+    boolean registerTransformationHooks(Identifier transformationId, TransformationHooks hooks);
 
     boolean registerGeneric(GenericContentDefinition definition);
 

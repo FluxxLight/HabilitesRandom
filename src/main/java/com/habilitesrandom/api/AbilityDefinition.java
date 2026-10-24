@@ -14,6 +14,8 @@ public record AbilityDefinition(
         boolean targetsEntities, boolean targetsPlayers,
         ProjectileSpec projectile, DestructionSpec destruction
 ) implements CatalogEntry {
+    public static AbilityBuilder builder(Identifier id) { return new AbilityBuilder(id); }
+
     public AbilityDefinition {
         if (id == null || displayName == null || displayName.isBlank() || cooldownTicks <= 0)
             throw new IllegalArgumentException("Ability requires id, name and positive cooldown");

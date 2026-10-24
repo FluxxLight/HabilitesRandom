@@ -1,0 +1,7 @@
+plugins { id 'java'; id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT' }
+version='1.0.0+26.3'; group='com.habilitesrandom.example'; base { archivesName='HabilitesRandom-Test-Plus' }
+repositories { mavenCentral() }
+dependencies { minecraft 'com.mojang:minecraft:26.3'; implementation 'net.fabricmc:fabric-loader:0.19.5'; implementation 'net.fabricmc.fabric-api:fabric-api:0.165.0+26.3'; implementation project(':') }
+loom { mods { 'habilitesrandom_test_plus' { sourceSet sourceSets.main } } }
+tasks.withType(JavaCompile).configureEach { options.release=25; options.encoding='UTF-8' }
+java { sourceCompatibility=JavaVersion.VERSION_25; targetCompatibility=JavaVersion.VERSION_25 }

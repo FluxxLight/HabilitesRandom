@@ -1,0 +1,1 @@
+{"schemaVersion":1,"id":"habilitesrandom_test_plus","version":"1.0.0+26.3","name":"HabilitesRandom Test Plus","environment":"*","entrypoints":{"habilitesrandom:addon":["com.habilitesrandom.exampleplus.TestPlusAddon"]},"depends":{"fabricloader":">=0.19.5","minecraft":"~26.3","java":">=25","fabric-api":"*","habilitesrandom":">=1.0.0"}}

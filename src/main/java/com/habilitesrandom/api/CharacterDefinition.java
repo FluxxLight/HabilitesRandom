@@ -7,6 +7,8 @@ import java.util.List;
 public record CharacterDefinition(Identifier id, String displayName, Identifier animeId, Identifier rarityId,
         StrengthCategory category, int drawWeight, String description, List<Identifier> abilityIds,
         Identifier transformationId, String iconId, String presentationTheme) implements CatalogEntry {
+    public static CharacterBuilder builder(Identifier id) { return new CharacterBuilder(id); }
+
     public CharacterDefinition {
         if (id == null || displayName == null || displayName.isBlank() || animeId == null || rarityId == null)
             throw new IllegalArgumentException("Character identity is incomplete");
