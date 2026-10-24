@@ -63,3 +63,9 @@ To add a character:
 4. Keep all execution requests server-authoritative; never mutate gameplay from client code.
 
 Run `./gradlew build` for unit/integrity tests. Run `./gradlew runClientGameTest` in a graphical/Xvfb environment for the real-client navigation smoke test.
+
+## Randomizer, controls, and server policy (Prompt 3)
+
+Global Fabric mappings are Z/X/C/V for ability slots 1–4 and left Alt for the powerful form. They are visible and remappable in Minecraft controls; the HUB controls page edits those same mappings. The client sends only an action and slot. `PlayerAuthorityGate` resolves the persisted character and registered loadout, checks life/cooldown/configuration, and the server executes bounded combat and starts the persisted cooldown.
+
+The first draw is explicitly requested from the Randomizer screen. `RandomizerService` reads every enabled `CharacterRegistry` entry—including entries supplied by Plus addons—normalizes independent weights, applies a bounded category-only anti-luck multiplier, assigns the complete loadout, saves it, and only then sends the reveal payload. A second normal draw is rejected. Configure gameplay in `config/habilitesrandom/server.json`; options include enablement, allow/block filters, weight overrides, anti-luck, announcements, ability execution and safety caps. Server configuration is authoritative.
